@@ -1,7 +1,7 @@
 % Visualize script: visualizes raw data.
 %% 
-name = 'wave';
-motion = train.(char(name));
+name = 'figure8';
+motion = lpf.(char(name));
 %% Visualize:
 figure;
 colors = {'k', 'r', 'b', 'c', 'g'};
