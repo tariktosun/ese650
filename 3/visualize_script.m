@@ -1,3 +1,4 @@
+% Visualize script: visualizes raw data.
 %% 
 name = 'wave';
 motion = train.(char(name));
