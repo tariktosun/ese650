@@ -52,5 +52,28 @@ seqs = {seq1,seq2};
 [estTR,estE] = hmmtrain(seqs,trans,emis, 'Verbose', true);
 
 %% Using kmQuantize now:
-
-
+[ quantized, centers ] = kmGetCenters( lpf, 20 );
+%% Plot the centers:
+names = {char('circle'), char('figure8'), char('fish'), char('hammer'), char('pend'), char('wave')};
+NC = numel(names);
+colors = varycolor(NC);
+figure;
+for i=1:NC
+    name = names{i};
+    c = centers.(name);
+    plot3(c(:,1), c(:,2), c(:,3), 'Color', colors(i,:), 'Marker', '.', 'Line', 'none');
+    hold on;
+end
+%% test quantizer:
+f8 = lpf.figure8{2};
+f8 = f8(:,2:4);
+%figure; visualize_acc(f8);
+c = centers.figure8;
+q = kmQuantize(f8, c);
+% plot:
+figure;
+colors = varycolor(size(c,1));
+for i=1:size(c,1)
+    plot3(f8(q==i,1), f8(q==i,2), f8(q==i,3), 'Color', colors(i,:), 'Marker', '.');
+    hold on;
+end
