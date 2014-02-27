@@ -1,4 +1,5 @@
 function [ quantized ] = kmQuantize( observations, centers )
+% [ quantized ] = kmQuantize( observations, centers )
 % Quantizes observations into symbols based on the closest center.
 %% input processing
 assert(size(observations,2) == size(centers,2));

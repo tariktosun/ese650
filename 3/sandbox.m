@@ -1,34 +1,29 @@
-%% Quantize the filtered data:
-k = 3;
-[ quantized, centers ] = kmClusterData( lpf, k );
-%% Learn an HMM:
-numHidden = 3*k;
-pTrans = 0.1;
-Ai = eye(numHidden)*(1-pTrans) + diag( ones(numHidden-1, 1), 1 )*pTrans;
-Ai(numHidden, 1) = pTrans;
-bi = ones(numHidden, k)/numHidden;
-%% train HMM for figure8:
-[f8Trans, f8Emit] = hmmtrain( quantized.figure8, Ai, bi, 'Verbose', true);
-%% train HMM for pendulum:
-[pTrans, pEmit] = hmmtrain( quantized.pend, Ai, bi, 'Verbose', true);
-%% Estimate training error:
-f8LpF8 = 0;
-f8LpP = 0;
-pLpP = 0;
-pLpF8 = 0;
-for i=1:numel(quantized.pend)
-    [~,Lp] = hmmdecode(quantized.pend{i},f8Trans,f8Emit);
-    pLpF8 = pLpF8 + Lp;
-    [~,Lp] = hmmdecode(quantized.pend{i},pTrans,pEmit);
-    pLpP = pLpP + Lp;
+%% Convert quantized data to vector form
+
+dataset = lpf;
+X = {};
+y = [];
+for i=1:numel(names)
+    X = cat(2, X, dataset.(names{i}));
+    y = cat(1, y, ones(numel(dataset.(names{i})), 1)*i);
 end
-for i=1:numel(quantized.figure8)
-    [~,Lp] = hmmdecode(quantized.figure8{i},f8Trans,f8Emit);
-    f8LpF8 = f8LpF8 + Lp;
-    [~,Lp] = hmmdecode(quantized.figure8{i},pTrans,pEmit);
-    f8LpP = f8LpP + Lp;
+N = numel(y);
+%% test gestureModelTrain.m
+params = struct();
+params.k = 3;
+params.numHidden = 6;
+[ hmmModel ] = gestureModelTrain( X, y, params );
+
+%% partition:
+num_partitions = 3;
+cp = cvpartition(y, 'k', num_partitions);
+
+correct = [];
+for i=1:cp.NumTestSets
+    test_idx = test(cp,i);
+    hmmModel = gestureModelTrain(X{~test_idx}, y(~test_idx), params);
+    [yhat, logProbs] = gestureModelClassify(X{test_idx}, hmmModel);
+    correct = cat( 1, correct, yhat==y(test_idx) ); 
 end
-pLpP = pLpP / numel(quantized.pend)
-pLpF8 = pLpF8 / numel(quantized.pend)
-f8LpP = f8LpP / numel(quantized.figure8)
-f8LpF8 = f8LpF8 / numel(quantized.figure8)
+% compute and return error rate:
+error_rate = sum( ~correct ) / numel(correct);
