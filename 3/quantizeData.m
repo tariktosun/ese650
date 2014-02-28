@@ -1,0 +1,4 @@
+function [ quantized ] = quantizeData(  )
+
+
+end
