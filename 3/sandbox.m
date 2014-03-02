@@ -1,4 +1,4 @@
-%% Convert quantized data to vector form
+%% Convert data to vector form
 
 dataset = lpf;
 X = {};
@@ -8,21 +8,31 @@ for i=1:numel(names)
     y = cat(1, y, ones(numel(dataset.(names{i})), 1)*i);
 end
 N = numel(y);
+% Select only the appropriate fields:
+for i=1:numel(X)
+   X{i} = X{i}(:,2:7); 
+end
 %% test gestureModelTrain.m
+% Only use circles and figure8s:
+labels = [1,2];
+X = X((y==1 | y==2));
+y = y((y==1 | y==2));
+
 params = struct();
-params.k = 3;
-params.numHidden = 6;
-[ hmmModel ] = gestureModelTrain( X, y, params );
+params.labels = labels;
+params.k = 10;
+params.numHidden = 10;
+%[ hmmModel ] = gestureModelTrain( X, y, params );
 
 %% partition:
-num_partitions = 3;
+num_partitions = 2;
 cp = cvpartition(y, 'k', num_partitions);
 
 correct = [];
 for i=1:cp.NumTestSets
     test_idx = test(cp,i);
     hmmModel = gestureModelTrain(X{~test_idx}, y(~test_idx), params);
-    [yhat, logProbs] = gestureModelClassify(X{test_idx}, hmmModel);
+    [yhat, logProbs] = gestureModelClassify(X{test_idx}, hmmModel, labels);
     correct = cat( 1, correct, yhat==y(test_idx) ); 
 end
 % compute and return error rate:

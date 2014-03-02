@@ -5,7 +5,8 @@ function [ hmmModel ] = gestureModelTrain( X, y, params )
 
 %% Perform KNN to generate codebooks:
 k = params.k;
-[ X, centers ] = kmClusterData( X, y, k );
+labels = params.labels;
+[ X, centers ] = kmClusterData( X, y, k, labels );
 
 %% HMM setup:
 numHidden = params.numHidden;
