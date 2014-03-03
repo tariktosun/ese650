@@ -15,6 +15,6 @@ for i=1:numel(names)
     for j=1:numel(motion)
         dataset = motion{j};
         dataset = dataset(:,2:end); % don't filter time.
-        lpf.(char(names{i})){j}(:,2:end) = filter(filt, 1, dataset);
+        lpf.(char(names{i})){j}(:,2:end) = filtfilt(filt, 1, dataset);
     end
 end

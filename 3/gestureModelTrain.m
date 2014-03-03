@@ -1,13 +1,12 @@
 function [ hmmModel ] = gestureModelTrain( X, y, params )
 % [ hmmModel ] = gestureModelTrain( X, y )
 % Trains several HMM models to recognize different gestures.
-% Assumes data has been quantized already.
 
-%% Perform KNN to generate codebooks:
+%% Perform KNN to generate codebook:
 k = params.k;
-labels = params.labels;
-[ X, centers ] = kmClusterData( X, y, k, labels );
-
+[ centers ] = kmSingleCodebook( X, k );
+% quantize X:
+X = kmQuantize(X, centers);
 %% HMM setup:
 numHidden = params.numHidden;
 pTrans = 0.1;
@@ -25,5 +24,5 @@ for i=labels
     [A, b] = hmmtrain( seq, Ai, bi, 'Verbose', true);
     hmmModel{i}.A = A;
     hmmModel{i}.b = b;
-    hmmModel{i}.centers = centers{i};
+    %hmmModel{i}.centers = centers{i};
 end
