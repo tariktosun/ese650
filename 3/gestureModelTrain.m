@@ -1,4 +1,4 @@
-function [ hmmModel ] = gestureModelTrain( X, y, params )
+function [ hmmModel, centers ] = gestureModelTrain( X, y, params )
 % [ hmmModel ] = gestureModelTrain( X, y )
 % Trains several HMM models to recognize different gestures.
 
@@ -6,7 +6,9 @@ function [ hmmModel ] = gestureModelTrain( X, y, params )
 k = params.k;
 [ centers ] = kmSingleCodebook( X, k );
 % quantize X:
-X = kmQuantize(X, centers);
+for i=1:numel(X)
+    X{i} = kmQuantize(X{i}, centers)';
+end
 %% HMM setup:
 numHidden = params.numHidden;
 pTrans = 0.1;
@@ -18,11 +20,10 @@ hmmModel = {};
 symbols = unique(y);
 %assert(all( symbols' == 1:max(symbols) ));   % should be integers.
 %for i=1:max(symbols)
-for i=labels
+for i=params.labels
     hmmModel{i} = struct();
     seq = X( y==i );
     [A, b] = hmmtrain( seq, Ai, bi, 'Verbose', true);
     hmmModel{i}.A = A;
     hmmModel{i}.b = b;
-    %hmmModel{i}.centers = centers{i};
 end
