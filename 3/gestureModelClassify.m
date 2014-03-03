@@ -15,6 +15,7 @@ for i=1:M
     scores(j,i) = Lp;
     end
 end
-[~,yhat] = min(scores, [], 2);
+[~,idx] = max(scores, [], 2);
+yhat = labels(idx)';
 
 end

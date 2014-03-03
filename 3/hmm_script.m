@@ -1,8 +1,9 @@
 %% Quantize the filtered data:
-k = 3;
+k = 2;
 [ quantized, centers ] = kmClusterData( lpf, k );
 %% Learn an HMM:
-numHidden = 3*k;
+%numHidden = 3*k;
+numHidden = 2;
 pTrans = 0.1;
 Ai = eye(numHidden)*(1-pTrans) + diag( ones(numHidden-1, 1), 1 )*pTrans;
 Ai(numHidden, 1) = pTrans;

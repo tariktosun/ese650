@@ -10,30 +10,36 @@ end
 N = numel(y);
 % Select only the appropriate fields:
 for i=1:numel(X)
-   X{i} = X{i}(:,2:7); 
+   X{i} = X{i}(:,2:4); 
 end
 %% test gestureModelTrain.m
 % Only use circles and figure8s:
-labels = [1,2];
-X = X((y==1 | y==2));
-y = y((y==1 | y==2));
+%labels = [1,2];
+%labels = [1,2,3,4,5,6];
+labels = [2, 5];
+mask = zeros(size(y));
+for i=labels
+    mask = mask | y==i;
+end
+X = X(mask);
+y = y(mask);
 
 params = struct();
 params.labels = labels;
-params.k = 10;
-params.numHidden = 10;
-%[ hmmModel ] = gestureModelTrain( X, y, params );
+params.k = 6;
+params.numHidden = 2;
+%[ hmmModel ] = gestureModelTrain( X, y, params);
 
 %% partition:
-num_partitions = 2;
+num_partitions = 5;
 cp = cvpartition(y, 'k', num_partitions);
 
 correct = [];
 for i=1:cp.NumTestSets
     test_idx = test(cp,i);
-    hmmModel = gestureModelTrain(X{~test_idx}, y(~test_idx), params);
-    [yhat, logProbs] = gestureModelClassify(X{test_idx}, hmmModel, labels);
+    hmmModel = gestureModelTrain(X(~test_idx), y(~test_idx), params);
+    [yhat, logProbs] = gestureModelClassify(X(test_idx), hmmModel, labels);
     correct = cat( 1, correct, yhat==y(test_idx) ); 
 end
 % compute and return error rate:
-error_rate = sum( ~correct ) / numel(correct);
+error_rate = sum( ~correct ) / numel(correct)

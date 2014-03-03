@@ -17,8 +17,9 @@ bi = ones(numHidden, k)/numHidden;
 %% Train HMM's:
 hmmModel = {};
 symbols = unique(y);
-assert(all( symbols' == 1:max(symbols) ));   % should be integers.
-for i=1:max(symbols)
+%assert(all( symbols' == 1:max(symbols) ));   % should be integers.
+%for i=1:max(symbols)
+for i=labels
     hmmModel{i} = struct();
     seq = X( y==i );
     [A, b] = hmmtrain( seq, Ai, bi, 'Verbose', true);
