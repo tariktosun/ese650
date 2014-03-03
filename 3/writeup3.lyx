@@ -43,10 +43,10 @@
 \shortcut idx
 \color #008000
 \end_index
-\leftmargin 1.5in
-\topmargin 1.5in
-\rightmargin 1.5in
-\bottommargin 1.5in
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -70,6 +70,474 @@ ESE 650 Homework 3 - Gesture Recognition with HMMs
 
 \begin_layout Author
 Tarik Tosun
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Standard
+In this assignment, I built a hidden-markov model (HMM) classifier for six
+ different gestures using IMU data from a mobile phone.
+ Data preprocessing proved very important.
+ My final method processed the data by band-pass filtering, downsampling,
+ and then quantizing using k-means clustering.
+ I found that a very simple cyclic left-to-right HMM with 6 symbols and
+ 2 hidden states produced the best results.
+ Using these techniques, I was able to achieve a LOOCV error rate of about
+ 10% on the training set.
+\end_layout
+
+\begin_layout Section*
+Data Processing
+\end_layout
+
+\begin_layout Standard
+Data processing proved very important for achieving good results.
+ My first step was to band-pass filter the data to select a range of frequencies
+ appropriate for human gestures.
+ I remove frequencies below 0.2 Hz and above 10Hz, thinking that 5 seconds
+ was a reasonable upper bound on the period of a human gesture, and that
+ it would be very difficult for a human to generate a hand-gesture at more
+ than 10Hz.
+ I think this filtering was important for extracting meaningful information
+ from the IMU data.
+ For example, Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:figure8-filtering"
+
+\end_inset
+
+ shows the filtered and unfiltered data for a figure 8 gesture.
+\end_layout
+
+\begin_layout Standard
+After filtering, the entire data set was quantized using 
+\begin_inset Formula $k$
+\end_inset
+
+-means clustering.
+ This converted the data from a 3-dimensional vector of continuous acceleration
+ values to a 1-dimensional vector of 
+\begin_inset Formula $k$
+\end_inset
+
+ discrete symbols.
+ HMM's can be run with either continuous or discrete observations, but based
+ on my literature review it seemed that vector quantization was a popular
+ choice for problems such as speech and gesture recognition 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rabiner,mantyla"
+
+\end_inset
+
+.
+ K-means and the Baum-Welch algorithm for HMM learning are both EM methods,
+ so using them in tandem could be viewed as similar to learning a continuous-emi
+ssion HMM where each emission distribution is a mixture of gaussians with
+ shared diagonal covariances.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/f8_unfiltered.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Unfiltered
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/f8_bandpass.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Band-pass filtered (0.2-10Hz)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+3D plot of figure8 (#1) acceleration data.
+ Horizontal axis is X, vertical is Z.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:figure8-filtering"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+HMM Results
+\end_layout
+
+\begin_layout Standard
+The Baum-Welch algorithm was used to train one HMM for each of the six gestures.
+ Rather than using a left-to-right HMM, I used a cyclic model which includes
+ a transition from the rightmost state to the leftmost state, forming a
+ loop.
+ My rationale was that this would make the model better-suited to modeling
+ repeated motions and more robust to data sets of different sizes.
+ I initialized my transition matrix with a 10% probability of transition
+ to the next state, and my emission matrix with uniform probability over
+ all symbols.
+ Data was downsampled by a factor of 5 to increase HMM training speed.
+ Using parameters 
+\begin_inset Formula $k=6$
+\end_inset
+
+ clusters/symbols and 
+\begin_inset Formula $n=2$
+\end_inset
+
+ hidden states, I was able to achieve a leave-one-out cross-validation (LOOCV)
+ error rate of about 10%.
+\end_layout
+
+\begin_layout Section*
+Analysis and Conclusions
+\end_layout
+
+\begin_layout Standard
+For this problem, a simple model produced much better results than more
+ complicated models.
+ Through cross-validation, I found that increasing 
+\begin_inset Formula $k$
+\end_inset
+
+ increased the error rate slightly, and increasing 
+\begin_inset Formula $n$
+\end_inset
+
+ had an even larger negative effect.
+ Decreasing 
+\begin_inset Formula $k$
+\end_inset
+
+ below 6 also increased the error rate.
+ Other techniques I attempted included a more sophisticated quantization
+ method (clustering each gesture individually to produce a different codebook
+ for each gesture), and a larger state vector (including gyro data as well
+ as accelerations).
+ These both performed poorly.
+\end_layout
+
+\begin_layout Standard
+From the results, it seems to me that the k-means clustering is really doing
+ the heavy lifting in terms of differentiating gestures.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "k-means-clustering"
+
+\end_inset
+
+ shows clustering results for the entire data set (all five data sets for
+ each motion are concatenated end-to-end in each picture).
+ By inspecting the plots, we get the sense that the different gestures could
+ probably be differentiated just by looking at the overall mix and proportion
+ of clusters present, without even considering the ordering of the observations.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/circle.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/figure8.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/fish.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Circle
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Figure 8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fish
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/hammer.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/pend.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/wave.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Hammer
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Pendulum
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Wave
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Clustered IMU data for the six gestures
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "k-means-clustering"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "rabiner"
+
+\end_inset
+
+Rabiner, L.
+ (1989).
+ A Tutorial on Hidden Markov Models and Selected Applications in Speech
+ Recognition.
+ Proceedings of the IEEE.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "mantyla"
+
+\end_inset
+
+Mantyla, V., & Mantyjarvi, J.
+ (2000).
+ Hand gesture recognition of a mobile device user.
+ In IEEE International Conference on Multimedia and Expo (Vol.
+ 00, pp.
+ 2–5).
+ Retrieved from http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=869596
 \end_layout
 
 \end_body

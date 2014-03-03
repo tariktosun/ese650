@@ -15,7 +15,7 @@ end
 labels = {'x', 'y', 'z'};
 for i=1:3
     subplot(3,1,i);
-    plot(t-t(1),ax(:,i), pltopts);
+    plot(t,ax(:,i), pltopts);
     xlabel(labels{i});
     hold on;
 end

@@ -34,7 +34,7 @@ for i=1:6
 end
 %%
 wave_x = [];
-wave_X = X(y==1);
+wave_X = X(y==6);
 for i=1:numel(wave_X)
     wave_x = cat(1, wave_x, wave_X{i});
 end
