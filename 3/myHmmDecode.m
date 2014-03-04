@@ -1,5 +1,5 @@
 function [stateEstimate, sequenceLogProb, logAlpha, logBeta] = myHmmDecode( seq, A, b )
-% [alpha, beta, stateEstimate] = myHmmDecode( seq, A, b );
+% [stateEstimate, sequenceLogProb, logAlpha, logBeta] = myHmmDecode( seq, A, b )
 % Forward-backward algorithm for HMM's.  Works in the log space to avoid
 % underflow.
 numObs = numel(seq);

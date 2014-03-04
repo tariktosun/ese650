@@ -88,7 +88,7 @@
 \begin_body
 
 \begin_layout Title
-ESE 650 Homework 3 - Gesture Recognition with an HMM
+ESE 650 Homework 3 - HMM Gesture Recognition
 \end_layout
 
 \begin_layout Author
@@ -279,7 +279,19 @@ status open
 \end_layout
 
 \begin_layout Itemize
-about 10% LOOCV error
+Training: about 10% LOOCV error
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Test Untrimmed: circle, hammer, wave, pend, figure8, figure8
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Test Trimmed: circle, hammer, wave, pend, wave, figure8
 \end_layout
 
 \begin_layout EndFrame
@@ -294,7 +306,7 @@ Analysis
 \begin_inset Float figure
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Tabular

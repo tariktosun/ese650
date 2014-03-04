@@ -1,6 +1,7 @@
 %% Convert data to vector form
 
 dataset = lpf;
+names = {'circle', 'figure8', 'fish', 'hammer', 'pend', 'wave'};
 X = {};
 y = [];
 for i=1:numel(names)
@@ -27,7 +28,7 @@ params = struct();
 params.labels = labels;
 params.k = 6;
 params.numHidden = 2;
-%[ hmmModel ] = gestureModelTrain( X, y, params);
+[ hmmModel, centers ] = gestureModelTrain( X, y, params);
 
 %% partition:
 num_partitions = numel(X);

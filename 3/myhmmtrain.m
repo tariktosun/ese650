@@ -36,8 +36,7 @@ function [bb, AA] = BWSingleSeq(seq, A, b)
     bb = b;
     numSymbols = size(b,2);
     numStates = size(A,2);
-    [alpha, beta, stateEstimate] = myForwardBackward( seq, A, b );
-    % estimate emissions
+    [stateEstimate, sequenceLogProb, logAlpha, logBeta] = myHmmDecode( seq, A, b );
     for state=1:numStates
         for symbol = 1:numSymbols
             occurrences = (seq == symbol) & (stateEstimate == state);

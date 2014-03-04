@@ -1,3 +1,6 @@
+function [lpf] = filterData( train )
+% [lpf] = filterData( train )
+% Applies a low-pass filter to the data.
 %% Low-pass filter:
 sampletime = 0.0101;  % average of
 rate = 1/sampletime;
@@ -17,4 +20,5 @@ for i=1:numel(names)
         dataset = dataset(:,2:end); % don't filter time.
         lpf.(char(names{i})){j}(:,2:end) = filtfilt(filt, 1, dataset);
     end
+end
 end
