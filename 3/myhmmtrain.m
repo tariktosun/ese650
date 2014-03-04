@@ -1,4 +1,4 @@
-function [A,b] = hmmtrain(seqs,guessA,guessb)
+function [A,b] = myHmmTrain(seqs,guessA,guessb)
 % [A,b] = hmmtrain(seqs,guessA,guessb)
 % Trains an HMM based on the sequences passed in.
 A =guessA;
