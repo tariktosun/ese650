@@ -10,13 +10,13 @@ logBeta = ones(numObs, numStates)*-Inf;
 logAlpha(1,1) = 0;     %We definitely start in the first state
 logBeta(end, :) = zeros(1,numStates);   %log(1) = 0
 %% forward:
-for i=1:numObs
+for i=2:numObs
     a = bsxfun( @plus, log( A' ), logAlpha(i-1,:) )';   % a is matrix; prev state down cols, cur state across rows
-    Q = max(a, 1);  % Q is a row vector
+    Q = max(a, [], 1);  % Q is a row vector
     logAlpha(i,:) = log( b(:,seq(i))' ) + Q + log( sum( exp(bsxfun(@minus,a,Q)), 1 ) );
 end
 %% backward:
-for i=numObs:1
+for i=numObs-1:1
     a = bsxfun(@plus, log( b(:, seq(i+1))' ), ...
             bsxfun(@plus, log( A ), logBeta(i+1,:) ) );
     Q = max(a, [], 2);  % Q is a column vector
@@ -27,7 +27,7 @@ end
 logGamma = logAlpha + logBeta;
 [~, stateEstimate] = max(logGamma, [], 2);
 % compute log prob of entire sequence:
-a = logAlpha(logAlpha(end,:));
+a = logAlpha(end,:);
 Q = max(a);
 sequenceLogProb = Q + log( sum( exp(a-Q) ) );
 

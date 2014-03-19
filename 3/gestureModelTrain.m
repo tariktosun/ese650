@@ -23,7 +23,8 @@ symbols = unique(y);
 for i=params.labels
     hmmModel{i} = struct();
     seq = X( y==i );
-    [A, b] = hmmtrain( seq, Ai, bi, 'Verbose', true);
+    %[A, b] = hmmtrain( seq, Ai, bi, 'Verbose', true);
+    [A, b] = myHmmTrain( seq, Ai, bi);
     hmmModel{i}.A = A;
     hmmModel{i}.b = b;
 end

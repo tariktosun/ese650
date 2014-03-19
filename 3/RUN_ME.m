@@ -3,7 +3,7 @@
 load model.mat
 %% Load the testing data:
 Xtest = {};
-
+%{
 Xtest{1} = load('test/trim01');
 Xtest{2} = load('test/trim02');
 Xtest{3} = load('test/trim03');
@@ -12,7 +12,7 @@ Xtest{5} = load('test/trim05');
 Xtest{6} = load('test/trim06');
 %}
 %
-%{
+
 Xtest{1} = load('test/fix01');
 Xtest{2} = load('test/fix02');
 Xtest{3} = load('test/fix03');

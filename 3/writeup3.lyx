@@ -269,6 +269,31 @@ The Baum-Welch algorithm was used to train one HMM for each of the six gestures.
  error rate of about 10%.
 \end_layout
 
+\begin_layout Standard
+In my implementation, I used the matlab built-in functions 
+\family typewriter
+hmmtrain
+\family default
+ and 
+\family typewriter
+hmmdecode
+\family default
+ to perform Baum-Welch and Forward-Backward, respectively.
+ I also wrote my own implementations of Baum-Welch and Forward-Backward,
+ which can be found in 
+\family typewriter
+myHmmTrain.m
+\family default
+ and 
+\family typewriter
+myHmmDecode.m
+\family default
+.
+ I did not have enough time to thoroughly debug this code, but I believe
+ they are fundamentally correct implementations of the algorithms.
+ I have included the files in my submission for reference.
+\end_layout
+
 \begin_layout Section*
 Analysis and Conclusions
 \end_layout
