@@ -26,7 +26,7 @@ y_range = -1:0.05:1;
 for i=1:num_particles
     %compute correlation
     c = map_correlation(MAP.map,x_im,y_im,Y(1:3,:),x_range,y_range);
-    a_posteriori_weights(i) = c;
+    a_posteriori_weights(i) = a_priori_weights .* c;
 end
 
 
@@ -35,7 +35,7 @@ for i=1:num_particles
     % generate rays:
     getMapCellsFromRay();
     % Add rays as free space:
-
+        % weight appropriately
     % Add endpoints as filled space:
 end
 end
