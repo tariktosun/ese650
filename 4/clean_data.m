@@ -14,9 +14,15 @@ for i=1:numel(hts)
     iidx(i) = find( its >= hts(i), 1, 'first' );
 end
 
-%% Package data and return
+%% Package data
 data = struct();
 data.ts = hts;
-data.Hokuyo = raw_data.Hokuyo;
+data.ranges = raw_data.Hokuyo.ranges;
+data.angles = raw_data.Hokuyo.angles;
 data.Encoders = raw_data.Encoders.counts(:, eidx);
 data.imu = raw_data.imu.vals(:, iidx);
+%% Process and return
+% average encoder values:
+data.Encoders(1,:) = (data.Encoders(1,:)+data.Encoders(3,:))/2;
+data.Encoders(2,:) = (data.Encoders(2,:)+data.Encoders(4,:))/2;
+data.Encoders = data.Encoders(1:2,:);

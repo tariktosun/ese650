@@ -12,7 +12,7 @@ classdef test_data < matlab.unittest.TestCase
             addpath(genpath('data'));
             % load data:
             testCase.names = {'20', '21', '22', '23', '24'};
-            raw_data = {};
+            testCase.raw_data = {};
             for i=1:numel(testCase.names)
                 load(['Encoders' testCase.names{i} '.mat']);
                 load(['Hokuyo' testCase.names{i} '.mat']);
