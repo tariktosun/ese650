@@ -12,7 +12,7 @@ a_priori_particles = a_priori( p_particles, data.odometry, params );
     a_posteriori( a_priori_particles, p_output.map, params );
 
 %% (3) re-sample particles
-resamples_particles = resample( a_posteriori_particles );
+resamples_particles = resample( a_posteriori_particles, params );
 
 %% Package output and return.
 output.map = a_posteriori_map;
