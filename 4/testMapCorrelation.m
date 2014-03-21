@@ -70,11 +70,14 @@ c = map_correlation(MAP.map,x_im,y_im,Y(1:3,:),x_range,y_range);
 %plot original lidar points
 figure(1);
 plot(xs1,ys1,'.')
+title('original lidar points');
 
 %plot map
 figure(2);
 imagesc(MAP.map);
+title('map');
 
 %plot correlation
 figure(3);
 surf(c)
+title('correlation');
