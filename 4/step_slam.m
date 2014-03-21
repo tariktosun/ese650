@@ -13,7 +13,7 @@ a_priori_particles = a_priori( p_particles, data.odometry, params );
 
 %% (3) re-sample particles
 if Neff < alpha * num_particles
-    particles = resample( particles, a_posteriori_weights, params );
+    particles = resample_particles( particles, a_posteriori_weights, params );
 end
 
 %% Package output and return.
