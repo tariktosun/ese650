@@ -1,2 +1,4 @@
 T = test_a_priori();
-result = T.run();
+T.run();
+%T.setup();
+%T.test_step_odometry_basic();

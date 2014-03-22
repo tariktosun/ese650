@@ -12,8 +12,8 @@ eL = sensitivity * eL;
 eR = sensitivity * eR;
 %%
 % Calculate motion parameters:
-dTheta = (eR - eL)/Weff;
-if dTheta ~=0 
+dTheta = (eL - eR)/Weff;
+if dTheta ~= 0 
     radius = eR / dTheta;
     % Approximate curve as turn - straight line - turn. (Thrun):
     dTrans = (radius+Weff/2)*dTheta;

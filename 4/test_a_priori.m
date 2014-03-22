@@ -6,6 +6,7 @@ classdef test_a_priori < matlab.unittest.TestCase
         raw_data
         data
         names
+        basic_encoder
     end
     
     methods (TestMethodSetup)
@@ -27,14 +28,17 @@ classdef test_a_priori < matlab.unittest.TestCase
                 % clean the data:
                 testCase.data{i} = clean_data( raw_data );
             end
+
+            % Set up basic encoder test:
+            testCase.basic_encoder = [ones(2,10), repmat([1;0],1,10) ];
         end
     end
     
     methods (Test)
         function test_step_odometry(testCase)
+            Weff = (((476.25 + 311.15)/2) / 1000) * 1.8;
             for j=1:numel(testCase.names)
                 D = testCase.data{j};
-                Weff = (((476.25 + 311.15)/2) / 1000) * 1.8;
                 x = zeros(3,numel(D.ts));
                 x(:,1) = [0; 0; 0];
                 for i=2:numel(D.ts)
@@ -46,6 +50,19 @@ classdef test_a_priori < matlab.unittest.TestCase
             end
         end
         
+        function test_step_odometry_basic(testCase)
+            Weff = (((476.25 + 311.15)/2) / 1000) * 1.8;
+            N = size(testCase.basic_encoder,2);
+            x = zeros(3,N);
+            x(:,1) = [0; 0; 0];
+            for i=2:N
+                e = testCase.basic_encoder(:,i);
+                x(:,i) = step_odometry( x(:,i-1), e, Weff );
+            end
+            figure();
+            plot(x(1,:), x(2,:), '.')
+            title('basic');
+        end
     end
     
 end
