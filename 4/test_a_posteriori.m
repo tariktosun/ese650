@@ -6,10 +6,14 @@ classdef test_a_posteriori < matlab.unittest.TestCase
         raw_data
         data
         names
+        params
     end
     
     methods (TestMethodSetup)
         function setup(testCase)
+            Weff = (((476.25 + 311.15)/2) / 1000) * 1.8;
+            testCase.params.Weff = Weff;
+            testCase.params.enc_sensitivity = 0.0125;
             addpath(genpath('data'));
             % load data:
             testCase.names = {'20', '21', '22', '23', '24'};
@@ -53,8 +57,8 @@ classdef test_a_posteriori < matlab.unittest.TestCase
         end
         %% test self-consistency over time:
         function test_self_consistency(testCase)
+            params = testCase.params;
             D = testCase.data{2};
-            Weff = (((476.25 + 311.15)/2) / 1000) * 1.8;
             indices = 500:1000;
             colorset = varycolor(numel(indices));
             x = zeros(3,numel(indices));
@@ -71,16 +75,17 @@ classdef test_a_posteriori < matlab.unittest.TestCase
             for i=indices(2:end)  % Step through time
                 j = j+1;
                 e = D.Encoders(:,i-1);
-                x(:,i) = step_odometry( x(:,i-1), e, Weff );
+                x(:,i) = step_odometry( x(:,i-1), e, params );
                 [ Y ] = transform_range( x(:,i), D.ranges(:,i), D.angles );
                 plot3(Y(1,:), Y(2,:), Y(3,:), '.', 'Color', colorset(j,:));
                 plot3(x(1,i), x(2,i), 0, 'ko')
                 l = 0.25;
-                plot3([x(1,i) x(2,i)+l*cos(x(3,i))], ...
+                plot3([x(1,i) x(1,i)+l*cos(x(3,i))], ...
                 [x(2,i) x(2,i)+l*sin(x(3,i))], [0 0], 'k');
                 %axis([-2 2 -2 2 -1 1])
                 grid on
                 drawnow
+                pause(0.1);
             end
         end
     end
