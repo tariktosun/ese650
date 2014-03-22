@@ -1,18 +1,13 @@
 function [a_posteriori_weights, a_posteriori_map] = ...
-    a_posteriori( a_priori_particles, p_output.map, params )
+    a_posteriori( a_priori_particles, p_output.map, ranges, angles, params )
 % [a_posteriori_weights, a_posteriori_map] = ...
 %    a_posteriori( a_priori_particles, p_output.map, params )
 %
-%% Compute Hokuyo-to-world xforms for each particle:
-% Compute xform from Hokuyo to IMU frame:
-Tsensor2imu = trans( [-0.29833+0.3302/2, 0, -0.51435] );
-
-% Compute IMU-to-world xforms for each particle:
-Timu2world = trans( , ,  )*rotz(0)*roty(0)*rotx(0); % todo: fill me in
-
-% Compose xforms:
 %% Apply xforms to Hokuyo measurements, and transform to from meters to cells:
 % Apply xforms
+for i=1:num_particles
+    Y{i} = transform_range( a_priori_particles(:,i), ranges, angles );
+end
 
 % Transform to cells
 

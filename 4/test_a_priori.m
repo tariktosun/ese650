@@ -30,7 +30,8 @@ classdef test_a_priori < matlab.unittest.TestCase
             end
 
             % Set up basic encoder test:
-            testCase.basic_encoder = [ones(2,10), repmat([1;0],1,10) ];
+            testCase.basic_encoder = 10*[ones(2,10), repmat([1;0],1,10),...
+                repmat([0;1],1,10), -ones(2,10), repmat([1;-1],1,10), ones(2,10)];
         end
     end
     
@@ -61,6 +62,7 @@ classdef test_a_priori < matlab.unittest.TestCase
             end
             figure();
             plot(x(1,:), x(2,:), '.')
+            axis equal
             title('basic');
         end
     end

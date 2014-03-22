@@ -1,10 +1,16 @@
 function [ Y ] = transform_range( particle, ranges, angles )
 % [ Y ] = transform_range( particle, ranges, angles )
-% Computes transform from Hokuyo to world frame.
+% Computes transform from Hokuyo to world frame for this particle, and
+% applies it to the measurements.
+%% size checks:
+assert( all(size(particle)==[3,1]) );
+assert( all(size(ranges) == size(angles)) );
+assert( size(ranges,2) == 1);
+
 %% Compute transform:
 zwheel = 0.254/2;
-Tsensor2imu = trans( [-0.29833+0.3302/2, 0, -0.51435] );
-Timu2world = trans( particle(1), particle(2), zwheel )*...
+Tsensor2imu = trans( -[-0.29833+0.3302/2, 0, -0.51435] );
+Timu2world = trans( [particle(1), particle(2), zwheel] )*...
     rotz(particle(3))*roty(0)*rotx(0);
 T = Timu2world*Tsensor2imu;
 %% Apply transform to ranges:

@@ -7,9 +7,10 @@ theta = particle(3);
 eL = encoder(1);
 eR = encoder(2);
 % scale encoders:
-sensitivity = 0.0125; %rad/mV
-eL = sensitivity * eL;
-eR = sensitivity * eR;
+sensitivity = 0.0125; % rad/mV
+wheelRadius = 0.254;  % meters
+eL = sensitivity * eL * wheelRadius;
+eR = sensitivity * eR * wheelRadius;
 %%
 % Calculate motion parameters:
 dTheta = (eL - eR)/Weff;
@@ -18,7 +19,7 @@ if dTheta ~= 0
     % Approximate curve as turn - straight line - turn. (Thrun):
     dTrans = (radius+Weff/2)*dTheta;
 else
-    dTrans = eR;
+    dTrans = eR; % eR = eL in this case.
 end
     dx = dTrans*cos(theta + dTheta/2);
     dy = dTrans*sin(theta + dTheta/2);
