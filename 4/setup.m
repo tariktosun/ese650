@@ -1,4 +1,5 @@
 addpath(genpath('data'));
+addpath(genpath('~/Dropbox/cookbook'));
 % load data:
 load Encoders20.mat
 load Hokuyo20.mat
