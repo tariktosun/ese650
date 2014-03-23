@@ -26,3 +26,6 @@ data.imu = raw_data.imu.vals(:, iidx);
 data.Encoders(1,:) = (data.Encoders(1,:)+data.Encoders(3,:))/2;
 data.Encoders(2,:) = (data.Encoders(2,:)+data.Encoders(4,:))/2;
 data.Encoders = data.Encoders(1:2,:);
+% find and zero encoder and gyro duplicates:
+%data.Encoders(:,eidx==[0 eidx(1:end-1)]) = 0;
+%data.imu(:, iidx==[0 iidx(1:end-1)]) = 0;

@@ -99,11 +99,13 @@ classdef test_a_posteriori < matlab.unittest.TestCase
             Yi1 = to_cell_indices( Y1, params );
             Yi2 = to_cell_indices( Y2, params );
             % Write first to map:
-            map(Yi1) = 100;
+            x = to_cell_indices([0 0 0]', params );
+            write_to_map( map, x, Yi1, int8(ones(1, size(Yi1,2))), params );
             c11 = correlation( map, Y1, params );
             c12 = correlation( map, Y2, params );
             testCase.verifyGreaterThan(c11, c12);
-            map(Yi2) = 100;
+            %Write second to map:
+            write_to_map( map, x, Yi2, int8(ones(1, size(Yi1,2))), params );
             c122 = correlation( map, Y2, params );
 %            testCase.verifyGreaterThan(c11, c122);
 %            testCase.verifyGreaterThan(c122, c12);
