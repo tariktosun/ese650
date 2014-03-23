@@ -5,7 +5,7 @@ function [ pos_timeseries, map ] = basic_slam( x0, raw_data, params )
 data = clean_data( raw_data );
 
 pos_timeseries = zeros(3,numel(data.ts));
-map = zeros(params.sizex,params.sizey,'int8');
+map = create_map( params );
 %% step loop
 for i=2:imax
     d = indexData(data,i);

@@ -11,5 +11,5 @@ yis = ceil((ys1 - params.ymin) ./ params.res);
 
 %check the indices and populate the map
 indGood = (xis > 1) & (yis > 1) & (xis < params.sizex) & (yis < params.sizey);
-Yind = sub2ind(size(MAP.map),xis(indGood),yis(indGood));
+Yind = sub2ind([params.sizex, params.sizey],xis(indGood),yis(indGood));
 end

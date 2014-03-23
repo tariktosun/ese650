@@ -11,9 +11,7 @@ classdef test_a_posteriori < matlab.unittest.TestCase
     
     methods (TestMethodSetup)
         function setup(testCase)
-            Weff = (((476.25 + 311.15)/2) / 1000) * 1.8;
-            testCase.params.Weff = Weff;
-            testCase.params.enc_sensitivity = 1/180;
+            testCase.params = create_params();
             addpath(genpath('data'));
             % load data:
             testCase.names = {'20', '21', '22', '23', '24'};
@@ -87,6 +85,28 @@ classdef test_a_posteriori < matlab.unittest.TestCase
                 %drawnow
                 %pause(0.1);
             end
+        end
+        %% Basic test of the correlation function
+        function test_correlation_basic(testCase)
+            params = testCase.params;
+            map = create_map( params );
+            D = testCase.data{2};
+            first = D.ranges(:,100);
+            second = D.ranges(:,200);
+            % Convert ranges:
+            Y1 = transform_range( [0 0 0]', first, D.angles );
+            Y2 = transform_range( [0 0 0]', second, D.angles);
+            Yi1 = to_cell_indices( Y1, params );
+            Yi2 = to_cell_indices( Y2, params );
+            % Write first to map:
+            map(Yi1) = 100;
+            c11 = correlation( map, Y1, params );
+            c12 = correlation( map, Y2, params );
+            testCase.verifyGreaterThan(c11, c12);
+            map(Yi2) = 100;
+            c122 = correlation( map, Y2, params );
+            testCase.verifyGreaterThan(c11, c122);
+            testCase.verifyGreaterThan(c122, c12);
         end
     end
     

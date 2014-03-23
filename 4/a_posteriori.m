@@ -8,7 +8,7 @@ for i=1:num_particles
     % Apply xforms
     Y{i} = transform_range( a_priori_particles(:,i), ranges, angles ); % {P}x3x1081 array
     % convert to cell indices:
-    Yind{i} = to_cell( Y{i} ); % 1x1081 (or fewer) indices.
+    Yind{i} = to_cell_indices( Y{i} ); % 1x1081 (or fewer) indices.
 end
 %% Compute a map correlation value for each particle:
 for i=1:num_particles
