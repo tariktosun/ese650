@@ -4,29 +4,18 @@ function [a_posteriori_weights, a_posteriori_map] = ...
 %    a_posteriori( a_priori_particles, p_output.map, params )
 %
 %% Apply xforms to Hokuyo measurements, and transform to from meters to cells:
-% Apply xforms
 for i=1:num_particles
-    Y{i} = transform_range( a_priori_particles(:,i), ranges, angles );
+    % Apply xforms
+    Y{i} = transform_range( a_priori_particles(:,i), ranges, angles ); % {P}x3x1081 array
+    % convert to cell indices:
+    Yind{i} = to_cell( Y{i} ); % 1x1081 (or fewer) indices.
 end
-
-% Transform to cells
-
-    % Px3x1081 array
 %% Compute a map correlation value for each particle:
-
-% ( this is rough )
-x_im = MAP.xmin:MAP.res:MAP.xmax; %x-positions of each pixel of the map
-y_im = MAP.ymin:MAP.res:MAP.ymax; %y-positions of each pixel of the map
-
-x_range = -1:0.05:1;
-y_range = -1:0.05:1;
 for i=1:num_particles
     %compute correlation
-    c = map_correlation(MAP.map,x_im,y_im,Y(1:3,:),x_range,y_range);
+    c = correlation( map, Y{i}, params );
     a_posteriori_weights(i) = a_priori_weights .* c;
 end
-
-
 %% Compute a posteriori map:
 for i=1:num_particles
     % generate rays:

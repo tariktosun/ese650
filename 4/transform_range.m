@@ -22,6 +22,4 @@ ys0 = (ranges.*sin(angles))';
 X = [xs0;ys0;zeros(size(xs0)); ones(size(xs0))];
 Y=T*X;
 
-%transformed xs and ys
-%xs1 = Y(1,:);
-%ys1 = Y(2,:);
+assert( size(Y,1) == 4 );

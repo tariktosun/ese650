@@ -1,7 +1,8 @@
-function [ propagated ] = motion_model( particle, data, dt, params )
+function [ propagated ] = motion_model( particle, data, prev_time, params )
 % [ propagated ] = motion_model( particle, data, params );
 % 
+dt = data.ts - prev_time;
 %% propagate state forward using encoder and gyro data:
-integrated = step_odometry( particle, encoder, imu, dt, gyro_weight, Weff );
+integrated = step_odometry( particle, data.Encoder, imu, dt, gyro_weight, Weff ); % fix this function call
 %% add noise:
 propagated = add_motion_noise( integrated, params );
