@@ -11,6 +11,7 @@ classdef test_a_posteriori < matlab.unittest.TestCase
     
     methods (TestMethodSetup)
         function setup(testCase)
+            addpath(genpath('~/Dropbox/cookbook'));
             testCase.params = create_params();
             addpath(genpath('data'));
             % load data:
@@ -90,9 +91,9 @@ classdef test_a_posteriori < matlab.unittest.TestCase
         function test_correlation_basic(testCase)
             params = testCase.params;
             map = create_map( params );
-            D = testCase.data{2};
+            D = testCase.data{1};
             first = D.ranges(:,100);
-            second = D.ranges(:,200);
+            second = D.ranges(:,1000);
             % Convert ranges:
             Y1 = transform_range( [0 0 0]', first, D.angles );
             Y2 = transform_range( [0 0 0]', second, D.angles);
@@ -100,15 +101,45 @@ classdef test_a_posteriori < matlab.unittest.TestCase
             Yi2 = to_cell_indices( Y2, params );
             % Write first to map:
             x = to_cell_indices([0 0 0]', params );
-            write_to_map( map, x, Yi1, int8(ones(1, size(Yi1,2))), params );
+            map = write_to_map( map, x, Yi1, 1, params );
+            figure; imagesc(map);
             c11 = correlation( map, Y1, params );
             c12 = correlation( map, Y2, params );
             testCase.verifyGreaterThan(c11, c12);
             %Write second to map:
-            write_to_map( map, x, Yi2, int8(ones(1, size(Yi1,2))), params );
+            map = write_to_map( map, x, Yi2, 1, params );
             c122 = correlation( map, Y2, params );
-%            testCase.verifyGreaterThan(c11, c122);
-%            testCase.verifyGreaterThan(c122, c12);
+            testCase.verifyGreaterThan(c11, c122);
+            %testCase.verifyGreaterThan(c122, c12);
+        end
+        %% Test open loop correlation over a trajectory:
+        function test_open_loop_correlation(testCase)
+            params = testCase.params;
+            map = create_map( params );
+            idx = 500:1000;
+            D = testCase.data{1};
+            x = zeros(3,numel(idx));
+            c = zeros(1,numel(idx));
+            i=1;
+            Y = transform_range( x(:,i), D.ranges(:,idx(i)), D.angles);
+            c(i) = correlation( map, Y, params );
+            Yi = to_cell_indices(Y, params);
+            map = write_to_map( map, to_cell_indices(x,params), Yi, 1, params);
+            figure;
+            imshow(map);
+            drawnow;
+            for i=2:numel(idx)
+                % odometry:
+                x(:,i) = step_odometry( x(:,i-1), D.Encoders(:,idx(i)-1), params);
+                % scan:
+                Y = transform_range( x(:,i), D.ranges(:,idx(i)), D.angles);
+                c(i) = correlation( map, Y, params );
+                Yi = to_cell_indices(Y, params);
+                map = write_to_map( map, to_cell_indices(x,params), Yi, 1, params);
+                imshow(map)
+                drawnow
+            end
+            mean(c)
         end
     end
     
