@@ -12,12 +12,11 @@ classdef test_a_priori < matlab.unittest.TestCase
     
     methods (TestMethodSetup)
         function setup(testCase)
-            Weff = (((476.25 + 311.15)/2) / 1000) * 1.8;
-            testCase.params.Weff = Weff;
-            testCase.params.enc_sensitivity = 1/120;
+            testCase.params = create_params();
             addpath(genpath('data'));
             % load data:
             testCase.names = {'20', '21', '22', '23', '24'};
+            %testCase.names = {'20'};
             testCase.raw_data = {};
             testCase.data = {};
             for i=1:numel(testCase.names)

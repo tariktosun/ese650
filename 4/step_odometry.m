@@ -5,16 +5,16 @@ function [integrated] = step_odometry( particle, encoder, params )
 x = particle(1);
 y = particle(2);
 theta = particle(3);
-eL = encoder(1);
-eR = encoder(2);
+eL = encoder(2);
+eR = encoder(1);
 % scale encoders:
 %enc_sensitivity = 0.0125; % rad/mV
-wheelRadius = 0.254;  % meters
+wheelRadius = 0.254/2;  % meters
 eL = params.enc_sensitivity * eL * wheelRadius;
 eR = params.enc_sensitivity * eR * wheelRadius;
 %%
 % Calculate motion parameters:
-dTheta_enc = (eL - eR)/params.Weff;
+dTheta_enc = (eL - eR)/params.Weff;     % THETA SIGN IS WRONG.
 %dTheta_gyro = gyro_sensitivity * imu(6) * dt;
 %dTheta = dTheta_enc*(1-gyro_weight) + dTheta_gyro*gyro_weight;
 dTheta = dTheta_enc;
@@ -25,7 +25,7 @@ if dTheta ~= 0
 else
     dTrans = eR; % eR = eL in this case.
 end
-    dx = dTrans*cos(theta + dTheta/2);
-    dy = dTrans*sin(theta + dTheta/2);
+    dx = dTrans*cos(theta - dTheta/2);  % THETA SIGN IS WRONG
+    dy = dTrans*sin(theta - dTheta/2);  % THETA SIGN IS WRONG
 %% Add and return:
-integrated = [x+dx; y+dy; theta+dTheta];
+integrated = [x+dx; y+dy; theta-dTheta];% THETA SIGN IS WRONG

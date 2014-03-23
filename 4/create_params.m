@@ -14,5 +14,5 @@ params.sizey  = ceil((params.ymax - params.ymin) / params.res + 1);
 %% Odometry:
 Weff = (((476.25 + 311.15)/2) / 1000) * 1.8;
 params.Weff = Weff;
-params.enc_sensitivity = 1/180;
+params.enc_sensitivity = 2*pi/360;%1/120;
 end

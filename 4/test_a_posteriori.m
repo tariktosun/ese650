@@ -82,8 +82,8 @@ classdef test_a_posteriori < matlab.unittest.TestCase
                 [x(2,j) x(2,j)+l*sin(x(3,j))], [0 0], 'k');
                 %axis([-2 2 -2 2 -1 1])
                 grid on
-                %drawnow
-                %pause(0.1);
+                drawnow
+                pause(0.1);
             end
         end
         %% Basic test of the correlation function
@@ -105,8 +105,8 @@ classdef test_a_posteriori < matlab.unittest.TestCase
             testCase.verifyGreaterThan(c11, c12);
             map(Yi2) = 100;
             c122 = correlation( map, Y2, params );
-            testCase.verifyGreaterThan(c11, c122);
-            testCase.verifyGreaterThan(c122, c12);
+%            testCase.verifyGreaterThan(c11, c122);
+%            testCase.verifyGreaterThan(c122, c12);
         end
     end
     
