@@ -18,7 +18,10 @@ params.enc_sensitivity = 2*pi/360;%1/120;
 params.gyro_weight = 1;
 params.gyro_sensitivity=0.0171;
 params.gyro_bias = 373.81;
+%% Particles
+params.NP = 3;  % number of particles
 %% Noise Characteristics:
 params.sigmaXY = 0.05;        % meters
-params.sigmaTheta = 5*pi/180; % radians
+%params.sigmaTheta = 5*pi/180; % radians
+params.sigmaTheta = 0;
 end

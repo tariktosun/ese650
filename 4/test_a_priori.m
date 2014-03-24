@@ -103,6 +103,35 @@ classdef test_a_priori < matlab.unittest.TestCase
                 plot(xmm(1,:), xmm(2,:), 'r.');
             end
         end
+        %% Test full a_priori:
+        function test_full_a_priori(testCase)
+            params = testCase.params;
+            for j=1:numel(testCase.names)
+                D = testCase.data{j};
+                x = zeros(3,numel(D.ts));
+                particles = zeros(3, params.NP, numel(D.ts));
+                x(:,1) = [0; 0; 0];
+                d = indexData(D,1);
+                tprev = d.ts;
+                slam_state.time = d.ts;
+                slam_state.particles = particles(:,:,1);
+                for i=2:numel(D.ts)
+                    %e = D.Encoders(:,i);
+                    d = indexData(D,i);
+                    x(:,i) = step_odometry( x(:,i-1), d, d.ts-tprev, params );
+                    particles(:,:,i) = a_priori( slam_state, d, params );
+                    slam_state.particles = particles(:,:,i);
+                    slam_state.time = d.ts;
+                    tprev = d.ts;
+                end
+                figure()
+                plot(x(1,:), x(2,:)); hold on;
+                colorset = varycolor(params.NP);
+                for i=1:params.NP
+                    plot(squeeze(particles(1,i,:)), squeeze(particles(2,i,:)), '.', 'Color', colorset(i,:));
+                end
+            end
+        end
         %% Basic odometry integrator
         %{
         function test_step_odometry_basic(testCase)
