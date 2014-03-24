@@ -1,0 +1,158 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+ESE 650 Homework 4 - SLAM with a Particle Filter
+\end_layout
+
+\begin_layout Author
+Tarik Tosun
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Standard
+In this assignment, I implemented Simultaneous Localization and Mapping
+ (SLAM) with a particle filter.
+\end_layout
+
+\begin_layout Section*
+Data, particles, and map
+\end_layout
+
+\begin_layout Standard
+This project involved combining data from encoders, an IMU, a Hokuyo LIDAR,
+ and a Kinect camera.
+ I did not use the Kinect camera.
+ A challenge in data processing was dealing with the fact that the sensor
+ readings were not synchronized in time.
+ I dealt with this by synchronizing all the sensor data to the Hokuyo times,
+ by iterating over the Hokuyo samples and selecting the closest data point
+ for each sensor to the Hokuyo sample.
+\end_layout
+
+\begin_layout Standard
+I used 
+\color red
+<numparticles>
+\color inherit
+ particles in this assignment.
+ I resampled particles when 
+\color red
+<resampling condition>
+\color inherit
+.
+\end_layout
+
+\begin_layout Standard
+I represented the map as an int8 array.
+ I used dimensions 
+\color red
+<dimensions>
+\color inherit
+ and resolution 
+\color red
+<resolution>
+\color inherit
+.
+\end_layout
+
+\begin_layout Section*
+Prior estimate
+\end_layout
+
+\begin_layout Subsection*
+Odometry
+\end_layout
+
+\begin_layout Standard
+Sensor data from the robot encoders and IMU were available for odometry
+ estimation.
+ Encoder odometry alone was not enough to get good results.
+ When combined with the IMU for yaw estimation (through simple integration),
+ odometry was fairly accurate.
+\end_layout
+
+\begin_layout Subsection*
+Process Noise
+\end_layout
+
+\begin_layout Standard
+Process noise was applied as gaussian random noise after the odometry update.
+\end_layout
+
+\begin_layout Section*
+Posterior estimate - LIDAR correlation
+\end_layout
+
+\begin_layout Section*
+Analysis and Conclusion
+\end_layout
+
+\end_body
+\end_document
