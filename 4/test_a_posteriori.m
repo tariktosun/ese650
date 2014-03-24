@@ -58,7 +58,7 @@ classdef test_a_posteriori < matlab.unittest.TestCase
         function test_self_consistency(testCase)
             params = testCase.params;
             D = testCase.data{2};
-            indices = 500:1000;
+            indices = 1:1000;
             colorset = varycolor(numel(indices));
             x = zeros(3,numel(indices));
             x(:,1) = [0; 0; 0];
@@ -71,10 +71,13 @@ classdef test_a_posteriori < matlab.unittest.TestCase
             plot3([x(1,1) x(2,1)+l*cos(x(3,1))], ...
                 [x(2,1) x(2,1)+l*sin(x(3,1))], [0 0], 'k');
             j = 1;
+            tprev = D.ts(indices(1));
             for i=indices(2:end)  % Step through time
                 j = j+1;
-                e = D.Encoders(:,i-1);
-                x(:,j) = step_odometry( x(:,j-1), e, params );
+                %e = D.Encoders(:,i-1);
+                d = indexData(D,i);
+                dt = d.ts - tprev;
+                x(:,j) = step_odometry( x(:,j-1), d, dt, params );
                 [ Y ] = transform_range( x(:,j), D.ranges(:,i), D.angles );
                 plot3(Y(1,:), Y(2,:), Y(3,:), '.', 'Color', colorset(j,:));
                 plot3(x(1,j), x(2,j), 0, 'ko')
@@ -84,7 +87,8 @@ classdef test_a_posteriori < matlab.unittest.TestCase
                 %axis([-2 2 -2 2 -1 1])
                 grid on
                 drawnow
-                pause(0.1);
+                %pause(0.1);
+                tprev = d.ts;
             end
         end
         %% Basic test of the correlation function
@@ -130,7 +134,9 @@ classdef test_a_posteriori < matlab.unittest.TestCase
             drawnow;
             for i=2:numel(idx)
                 % odometry:
-                x(:,i) = step_odometry( x(:,i-1), D.Encoders(:,idx(i)-1), params);
+                d = indexData(D,i);
+                dt = d.ts - tprev;
+                x(:,i) = step_odometry( x(:,i-1), d, dt, params);
                 % scan:
                 Y = transform_range( x(:,i), D.ranges(:,idx(i)), D.angles);
                 c(i) = correlation( map, Y, params );

@@ -46,15 +46,43 @@ classdef test_a_priori < matlab.unittest.TestCase
                 D = testCase.data{j};
                 x = zeros(3,numel(D.ts));
                 x(:,1) = [0; 0; 0];
+                d = indexData(D,1);
+                tprev = d.ts;
                 for i=2:numel(D.ts)
-                    e = D.Encoders(:,i);
-                    x(:,i) = step_odometry( x(:,i-1), e, params );
+                    %e = D.Encoders(:,i);
+                    d = indexData(D,i);
+                    x(:,i) = step_odometry( x(:,i-1), d, d.ts-tprev, params );
+                    tprev = d.ts;
                 end
                 figure()
                 plot(x(1,:), x(2,:), '.')
             end
         end
+        %% test yaw values:
+        function test_yaw(testCase)
+            params = testCase.params;
+            for j=1:numel(testCase.names)
+                D = testCase.data{j};
+                x = zeros(3,numel(D.ts));
+                gyro_yaw = zeros(1,numel(D.ts));
+                x(:,1) = [0; 0; 0];
+                d = indexData(D,1);
+                tprev = d.ts;
+                for i=2:numel(D.ts)
+                    e = D.Encoders(:,i);
+                    d = indexData(D,i);
+                    dt = d.ts-tprev;
+                    x(:,i) = step_odometry( x(:,i-1), d, dt, params );
+                    gyro_yaw(i) = gyro_yaw(i-1) + d.gyro(3)*dt;
+                    tprev = d.ts;
+                end
+                figure()
+                plot(x(3,:)); hold on;
+                plot(gyro_yaw,'r');
+            end
+        end
         %% Basic odometry integrator
+        %{
         function test_step_odometry_basic(testCase)
             params = testCase.params;
             N = size(testCase.basic_encoder,2);
@@ -77,6 +105,7 @@ classdef test_a_priori < matlab.unittest.TestCase
             title('basic');
             hold off
         end
+        %}
     end
     
 end

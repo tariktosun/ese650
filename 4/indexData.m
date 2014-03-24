@@ -7,6 +7,6 @@ d.ts = data.ts(i);
 d.ranges = data.ranges(:,i);
 d.angles = data.angles;
 d.Encoders = data.Encoders(:,i);
-d.imu = data.imu(:,i);
+d.gyro = data.gyro(:,i);
 
 end
