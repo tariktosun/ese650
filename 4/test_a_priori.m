@@ -81,6 +81,28 @@ classdef test_a_priori < matlab.unittest.TestCase
                 plot(gyro_yaw,'r');
             end
         end
+        %% Test motion model:
+        function test_motion_model(testCase)
+            params = testCase.params;
+            for j=1:numel(testCase.names)
+                D = testCase.data{j};
+                x = zeros(3,numel(D.ts));
+                xmm = zeros(3, numel(D.ts));
+                x(:,1) = [0; 0; 0];
+                d = indexData(D,1);
+                tprev = d.ts;
+                for i=2:numel(D.ts)
+                    %e = D.Encoders(:,i);
+                    d = indexData(D,i);
+                    x(:,i) = step_odometry( x(:,i-1), d, d.ts-tprev, params );
+                    xmm(:,i) = motion_model( x(:,i-1), d, d.ts-tprev, params );
+                    tprev = d.ts;
+                end
+                figure()
+                plot(x(1,:), x(2,:)); hold on;
+                plot(xmm(1,:), xmm(2,:), 'r.');
+            end
+        end
         %% Basic odometry integrator
         %{
         function test_step_odometry_basic(testCase)
