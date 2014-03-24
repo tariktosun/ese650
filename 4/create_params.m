@@ -4,10 +4,10 @@ function params = create_params()
 params = struct();
 %% map parameters:
 params.res   = 0.1; %meters
-params.xmin  = -4;  %meters
+params.xmin  = -15;  %meters
 params.ymin  = -5;
-params.xmax  =  12;
-params.ymax  =  5;
+params.xmax  =  20;
+params.ymax  =  25;
 %dimensions of the map
 params.sizex  = ceil((params.xmax - params.xmin) / params.res + 1); %cells
 params.sizey  = ceil((params.ymax - params.ymin) / params.res + 1);
@@ -31,7 +31,7 @@ params.emptyDecrement = log((1-filledPrior)/emptyPrior)*multiplier;
 %% Particles
 params.NP = 3;  % number of particles
 %% Noise Characteristics:
-params.sigmaXY = 0.05;        % meters
+params.sigmaXY = 0.0;        % meters
 %params.sigmaTheta = 5*pi/180; % radians
 params.sigmaTheta = 0;
 end

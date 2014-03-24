@@ -21,7 +21,6 @@ end
 
 %% Package output and return.
 map = a_posteriori_map;
-slam_state.particles = particles;
 slam_state.weights = a_posteriori_weights;
 slam_state.time = data.ts;
 pos = slam_state.particles * slam_state.weights';   % weighted average
