@@ -5,9 +5,7 @@ function c = correlation( map, Y, params )
 assert( size(Y,1) == 4 );
 x_im = params.xmin:params.res:params.xmax; %x-positions of each pixel of the map
 y_im = params.ymin:params.res:params.ymax; %y-positions of each pixel of the map
-x_range = -1:0.05:1;
-y_range = -1:0.05:1;
 %%
-c = map_correlation(map, x_im, y_im, Y(1:3,:), x_range, y_range);
+c = map_correlation(map, x_im, y_im, Y(1:3,:), params.correlation_x_range, params.correlation_y_range);
 c = max(c(:));
 end

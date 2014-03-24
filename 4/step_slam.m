@@ -6,10 +6,10 @@ particles = slam_state.particles;
 
 %% (1) a priori estimate for particles using odometry
 a_priori_particles = a_priori( slam_state, data, params );
+slam_state.particles = a_priori_particles;
 
 %% (2) a posteriori estimate for particles and map using scan matching
-[a_posteriori_weights, a_posteriori_map] = ...
-    a_posteriori( a_priori_particles, slam_state, map, data, params );
+[a_posteriori_weights, a_posteriori_map] = a_posteriori( slam_state, map, data, params );
 
 %% (3) re-sample particles
 %{

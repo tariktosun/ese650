@@ -147,6 +147,30 @@ classdef test_a_posteriori < matlab.unittest.TestCase
             end
             mean(c)
         end
+        %% Test full a_posteriori:
+        function test_full_a_posteriori(testCase)
+            params = create_params();
+            map = create_map( params );
+            slam_state = initialize_slam_state(params);
+            D = testCase.data{1};
+            
+            %
+            i=1;
+            d = indexData(D,i);
+            xi = [0 0 0]';
+            Y = transform_range( xi, d.ranges, d.angles);
+            Yi = to_cell_indices(Y, params);
+            map = write_to_map( map, to_cell_indices(xi,params), Yi, 100, params);
+            %
+            for i=1:100
+                i
+                d = indexData(D,i);
+                [a_posteriori_weights, map] = a_posteriori( slam_state, map, d, params );
+                slam_state.weights = a_posteriori_weights;
+            end
+            figure;
+            imshow(map);
+        end
     end
     
 end
