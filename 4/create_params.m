@@ -29,9 +29,9 @@ emptyPrior = 0.85;  % p(laser-says-empty | actually-empty)
 params.filledIncrement = log(filledPrior/(1-emptyPrior))*multiplier;
 params.emptyDecrement = log((1-filledPrior)/emptyPrior)*multiplier;
 %% Particles
-params.NP = 3;  % number of particles
+params.NP = 10;  % number of particles
 %% Noise Characteristics:
-params.sigmaXY = 0.0;        % meters
+params.sigmaXY = 0.001;        % meters
 %params.sigmaTheta = 5*pi/180; % radians
-params.sigmaTheta = 0;
+params.sigmaTheta = 0.001;
 end

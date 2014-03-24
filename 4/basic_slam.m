@@ -30,6 +30,6 @@ for i=start_idx:stop_idx
     d = indexData(D,i);
     [pos, map, slam_state] = step_slam( d, slam_state, map, params );
     pos_timeseries(:,i) = pos;
-    plot_world( pos, map, params );
+    plot_world( pos, map, slam_state.particles, params );
     drawnow()
 end
