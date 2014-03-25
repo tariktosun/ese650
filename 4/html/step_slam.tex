@@ -1,0 +1,54 @@
+
+% This LaTeX was auto-generated from an M-file by MATLAB.
+% To make changes, update the M-file and republish this document.
+
+%\documentclass{article}
+%\usepackage{graphicx}
+%\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+%\begin{document}
+
+\small    
+\begin{verbatim}
+function [pos, map, slam_state] = ...
+    step_slam( data, slam_state, map, params )
+\end{verbatim}
+
+\textbf{(1) a priori estimate for particles using odometry}
+
+\begin{verbatim}
+a_priori_particles = a_priori( slam_state, data, params );
+slam_state.particles = a_priori_particles;
+\end{verbatim}    
+
+\textbf{(2) a posteriori estimate for particles and map using scan matching}
+
+\begin{verbatim}
+[a_posteriori_weights, a_posteriori_map] = a_posteriori( slam_state, map, data, params );
+\end{verbatim}
+
+
+\textbf{(3) re-sample particles}
+
+\begin{verbatim}
+%if Neff < alpha * num_particles
+%    particles = resample_particles( particles, a_posteriori_weights, params );
+%end
+\end{verbatim}
+
+% \textbf{Package output and return.}
+% \begin{verbatim}
+% map = a_posteriori_map;
+% slam_state.weights = a_posteriori_weights;
+% slam_state.time = data.ts;
+% pos = slam_state.particles * slam_state.weights';   % weighted average
+% \end{verbatim}
+
+
+
+%\end{document}
+    

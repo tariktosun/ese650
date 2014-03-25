@@ -96,125 +96,11 @@ Tarik Tosun
 \end_layout
 
 \begin_layout BeginFrame
-Data Processing
+Code Summary
 \end_layout
 
-\begin_layout Description
-Accelerations
-\begin_inset space ~
-\end_inset
-
-only Using gyro did not improve results
-\end_layout
-
-\begin_layout Description
-Band-Pass
-\begin_inset space ~
-\end_inset
-
-Filter 0.2Hz - 10Hz
-\end_layout
-
-\begin_layout Description
-K-Means
-\begin_inset space ~
-\end_inset
-
-Clustering to generate codebook
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename ../3/images/f8_unfiltered.png
-	width 40text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Unfiltered
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename ../3/images/f8_bandpass.png
-	width 40text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Band-pass filtered (0.2-10Hz)
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-3D plot of figure8 (#1) acceleration data.
- Horizontal axis is X, vertical is Z.
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:figure8-filtering"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+\begin_layout Itemize
+Particle Filter
 \end_layout
 
 \begin_layout EndFrame
@@ -222,55 +108,30 @@ name "fig:figure8-filtering"
 \end_layout
 
 \begin_layout BeginFrame
-HMM Results
-\end_layout
-
-\begin_layout Description
-Cyclic
-\begin_inset space ~
-\end_inset
-
-HMM Left-to-right, but loops back to start at end
-\end_layout
-
-\begin_layout Description
-Parameters 6 clusters (emission symbols), 2 hidden states
-\end_layout
-
-\begin_layout Description
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-vspace{1in}
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Block
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\end_inset
-
 Results
-\begin_inset ERT
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/data20-10particles-noResample.pdf
+	width 100text%
 
-}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+10 Particles, no Resampling (Dataset 20)
 \end_layout
 
 \end_inset
@@ -278,20 +139,9 @@ status open
 
 \end_layout
 
-\begin_layout Itemize
-Training: about 10% LOOCV error
-\end_layout
+\end_inset
 
-\begin_layout Itemize
 
-\series bold
-Test Untrimmed: circle, hammer, wave, pend, figure8, figure8
-\end_layout
-
-\begin_layout Itemize
-
-\series bold
-Test Trimmed: circle, hammer, wave, pend, wave, figure8
 \end_layout
 
 \begin_layout EndFrame
@@ -299,14 +149,14 @@ Test Trimmed: circle, hammer, wave, pend, wave, figure8
 \end_layout
 
 \begin_layout BeginFrame
-Analysis
+Odometry
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Tabular
@@ -321,7 +171,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../3/images/circle.png
+	filename images/odometry-integrated-20.png
 	width 30text%
 
 \end_inset
@@ -336,7 +186,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../3/images/figure8.png
+	filename images/odometry-integrated-21.png
 	width 30text%
 
 \end_inset
@@ -351,7 +201,7 @@ status collapsed
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../3/images/fish.png
+	filename images/odometry-integrated-22.png
 	width 30text%
 
 \end_inset
@@ -367,7 +217,7 @@ status collapsed
 \begin_inset Text
 
 \begin_layout Plain Layout
-Circle
+20
 \end_layout
 
 \end_inset
@@ -376,7 +226,7 @@ Circle
 \begin_inset Text
 
 \begin_layout Plain Layout
-Figure 8
+21
 \end_layout
 
 \end_inset
@@ -385,7 +235,7 @@ Figure 8
 \begin_inset Text
 
 \begin_layout Plain Layout
-Fish
+22
 \end_layout
 
 \end_inset
@@ -397,7 +247,7 @@ Fish
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../3/images/hammer.png
+	filename images/odometry-integrated-23.png
 	width 30text%
 
 \end_inset
@@ -412,7 +262,7 @@ Fish
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename ../3/images/pend.png
+	filename images/odometry-integrated-24.png
 	width 30text%
 
 \end_inset
@@ -426,12 +276,6 @@ Fish
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Graphics
-	filename ../3/images/wave.png
-	width 30text%
-
-\end_inset
-
 
 \end_layout
 
@@ -443,7 +287,7 @@ Fish
 \begin_inset Text
 
 \begin_layout Plain Layout
-Hammer
+23
 \end_layout
 
 \end_inset
@@ -452,7 +296,7 @@ Hammer
 \begin_inset Text
 
 \begin_layout Plain Layout
-Pendulum
+24
 \end_layout
 
 \end_inset
@@ -461,7 +305,7 @@ Pendulum
 \begin_inset Text
 
 \begin_layout Plain Layout
-Wave
+
 \end_layout
 
 \end_inset
@@ -478,15 +322,8 @@ Wave
 \begin_inset Caption
 
 \begin_layout Plain Layout
-Clustered acceleration data for the six gestures
+Pure Odometry Integration
 \end_layout
-
-\end_inset
-
-
-\begin_inset CommandInset label
-LatexCommand label
-name "k-means-clustering"
 
 \end_inset
 
@@ -496,6 +333,14 @@ name "k-means-clustering"
 \end_inset
 
 
+\end_layout
+
+\begin_layout EndFrame
+
+\end_layout
+
+\begin_layout BeginFrame
+Analysis
 \end_layout
 
 \begin_layout EndFrame
