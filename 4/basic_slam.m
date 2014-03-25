@@ -1,16 +1,16 @@
-function [ pos_timeseries, map ] = basic_slam( raw_data, start_idx, stop_idx )
+function [ pos_timeseries, map ] = basic_slam( raw_data, params, start_idx, stop_idx )
 % [ pos_timeseries, map_timeseries ] = basic_slam( x0, data, params )
 %
 %%
 D = clean_data( raw_data );
-if nargin==1
+if nargin==2
     start_idx = 1 ;
     stop_idx = numel(D.ts);
-elseif nargin==2
+elseif nargin==3
     stop_idx = numel(D.ts);
 end
 %% initialization
-params = create_params();
+%params = create_params();
 map = create_map( params );
 slam_state = initialize_slam_state(params);
 pos_timeseries = zeros(3,stop_idx);

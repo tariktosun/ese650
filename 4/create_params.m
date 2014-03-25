@@ -1,4 +1,4 @@
-function params = create_params()
+function params = create_params(num_particles)
 %
 %
 params = struct();
@@ -29,9 +29,16 @@ emptyPrior = 0.85;  % p(laser-says-empty | actually-empty)
 params.filledIncrement = log(filledPrior/(1-emptyPrior))*multiplier;
 params.emptyDecrement = log((1-filledPrior)/emptyPrior)*multiplier;
 %% Particles
-params.NP = 10;  % number of particles
+if nargin < 1
+    num_particles = 10;
+end
+params.NP = num_particles;
 %% Noise Characteristics:
-params.sigmaXY = 0.001;        % meters
-%params.sigmaTheta = 5*pi/180; % radians
-params.sigmaTheta = 0.001;
+if num_particles == 1
+    params.sigmaXY = 0;
+    params.sigmaTheta = 0;
+else
+    params.sigmaXY = 0.001;        % meters
+    params.sigmaTheta = 0.001;     %radians
+end
 end
