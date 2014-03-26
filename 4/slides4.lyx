@@ -316,29 +316,19 @@ sideways false
 status open
 
 \begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
 \begin_inset Graphics
 	filename images/data20-10particles-noResample.pdf
-	display false
-	width 35text%
-	rotateAngle -90
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-10 Particles, no Resampling (training set 20)
-\end_layout
+	width 45text%
 
 \end_inset
 
@@ -346,39 +336,44 @@ status collapsed
 \end_layout
 
 \end_inset
-
- 
-\begin_inset Float figure
-wide false
-sideways false
-status collapsed
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename images/test1-5particles-noResample.pdf
-	display false
-	width 35text%
+	filename images/test1-10particles-resampled.pdf
+	width 45text%
 
 \end_inset
 
 
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Caption
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-
+Training set 20
 \end_layout
 
 \end_inset
-
-
-\end_layout
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
-
+Test set 1
 \end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
 
 \end_inset
 
@@ -408,7 +403,33 @@ Odometry worked well on training set, but not test set
 
 \begin_deeper
 \begin_layout Itemize
-Suspicious...
+Suspicious
+\end_layout
+
+\begin_layout Itemize
+But noise characteristics were the same
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Getting the parameters right is important
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Noise characteristics
+\end_layout
+
+\begin_layout Itemize
+Number of particles
+\end_layout
+
+\begin_layout Itemize
+Resample rate
+\end_layout
+
+\begin_layout Itemize
+Laser priors
 \end_layout
 
 \end_deeper
@@ -418,11 +439,15 @@ Possible Improvements:
 
 \begin_deeper
 \begin_layout Itemize
-Resampling
+Better parameter tuning
 \end_layout
 
 \begin_layout Itemize
 Pruning scans on hills
+\end_layout
+
+\begin_layout Itemize
+Better measure of correlation
 \end_layout
 
 \end_deeper

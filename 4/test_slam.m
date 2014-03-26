@@ -46,13 +46,16 @@ classdef test_slam < matlab.unittest.TestCase
     methods (Test)
         %% test slam!
         function test_basic_slam(testCase)
-            params = create_params(1);
-            basic_slam(testCase.raw_data{2}, params, 500);
+            params = create_params(10);
+            basic_slam(testCase.raw_data{3}, params, 500);
         end
         %% test set
         function test_test_set(testCase)
-           params = create_params(5);
-           basic_slam(testCase.raw_test{1}, params); 
+           params = create_params(10);
+           %params.sigmaRL = 2;   %5.6824
+           %params.sigmaGyro = 0.3627/100;
+           %params.resample_alpha = 0.001;
+           basic_slam(testCase.raw_test{1}, params, 500); 
         end
     end
 end

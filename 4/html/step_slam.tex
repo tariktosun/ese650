@@ -7,12 +7,11 @@
 %\usepackage{color}
 
 \sloppy
-\definecolor{lightgray}{gray}{0.5}
+%\definecolor{lightgray}{gray}{0.5}
 \setlength{\parindent}{0pt}
 
 %\begin{document}
 
-\small
 %\begin{verbatim}
 \begin{lstlisting}[language=Matlab]
 function [pos, map, slam_state] = ...
@@ -20,7 +19,8 @@ function [pos, map, slam_state] = ...
 \end{lstlisting}
 %\end{verbatim}
 
-\structure{\textbf{(1) a priori estimate for particles using odometry}}
+%\structure
+{\textbf{(1) a priori estimate for particles using odometry}}
 
 %\begin{verbatim}
 \begin{lstlisting}[language=Matlab]
@@ -29,7 +29,8 @@ slam_state.particles = ...
 \end{lstlisting}
 %\end{verbatim}    
 
-\structure{\textbf{(2) a posteriori estimate for particles and map using scan matching}}
+%\structure
+{\textbf{(2) a posteriori estimate for particles and map using scan matching}}
 
 %\begin{verbatim}
 \begin{lstlisting}[language=Matlab]
@@ -39,13 +40,11 @@ slam_state.particles = ...
 %\end{verbatim}
 
 
-\structure{\textbf{(3) re-sample particles}}
+%\structure
+{\textbf{(3) re-sample particles}}
 
 \begin{lstlisting}[language=Matlab]
-%if Neff < alpha * num_particles
-%    particles = resample_particles( particles, ...
-        a_posteriori_weights, params );
-%end
+slam_state = resample_particles( slam_state, params );
 \end{lstlisting}
 %\end{verbatim}
 

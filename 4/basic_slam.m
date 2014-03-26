@@ -22,7 +22,6 @@ xi = [0 0 0]';
 Y = transform_range( xi, d.ranges, d.angles);
 Yi = to_cell_indices(Y, params);
 map = write_to_map( map, to_cell_indices(xi,params), Yi, 100, params);
-%
 
 %% step loop
 figure;
@@ -32,4 +31,5 @@ for i=start_idx:stop_idx
     pos_timeseries(:,i) = pos;
     plot_world( pos, map, slam_state.particles, params );
     drawnow()
+    slam_state.weights
 end
