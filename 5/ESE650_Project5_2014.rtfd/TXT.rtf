@@ -1,0 +1,26 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1187\cocoasubrtf400
+\cocoascreenfonts1{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc0\levelnfcn0\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{decimal\}.}{\leveltext\leveltemplateid1\'02\'00.;}{\levelnumbers\'01;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\margl1440\margr1440\vieww24680\viewh16520\viewkind1\viewscale200
+\deftab720
+\pard\pardeftab720\qc
+
+\f0\fs32 \cf0 \ul \ulc0 ESE650 Project 5:\ulnone  Cost Learning and Path Planning\
+Due Date: 
+\b 4/8/2014 at 1:30pm
+\b0  on Canvas, and in class\
+\
+\pard\pardeftab720\qj
+\cf0 	In this project, you will build a route planner for the Penn campus. First, you will learn a cost map of the UPenn campus based on a high resolution aerial photograph. Then you will  use Dijkstra's algorithm and/or A* search to build a path planner. More details are stated as follows.\
+\
+\pard\tx220\tx720\pardeftab720\li720\fi-720\sa320\qj
+\ls1\ilvl0\cf0 {\listtext	1.	}The aerial map is obtained from Google and is provided. Make sure you can interpret the data. Also, some Matlab MEX files have been provided for calculating costs and running Dijkstra's algorithm and A* search. More details on how to use these functions will be covered in class.\
+{\listtext	2.	}First you should select a bag of features based on the map. Use your imagination to find sufficient and relevant features for the purpose of path planning. For example, the color of pixels, edges, geometric properties of regions, etc.\
+{\listtext	3.	}Next you should hand label some paths you would consider reasonable, and use that as the training set. The reinforcement learning method described in the paper "Learning to Search: Functional Gradient Techniques" can be implemented to learn the cost associated with each feature that you have selected.\
+{\listtext	4.	}Now you should be able to generate a cost map based on the bag of features and the cost that has been learnt. Use this to run Dijkstra's algorithm and/or A* search to find the optimal path. Please make sure your algorithm can take two points by clicking and calculate the shortest path between them. You will need to demonstrate your final cost map and the path planning in class.\
+{\listtext	5.	}The above training part can be performed under different modalities. For example, driving vs. walking. To do this you need to gather multiple training sets of desired paths (for example, the driving route needs to stay on the road to get from Levine to Fagin Hall, but the walking route for the same endpoints can take Woodland Walk). \
+{\listtext	6.	}You will upload to Canvas a written description of your algorithm in PDF form and a zip file of your code. Use the naming convention \'93project5_[YourPennKey].pdf\'94 and \'93project5_[YourPennKey].zip\'94. \
+{\listtext	7.	}For the presentation in class you are expected to bring your own laptop or use the classroom computer. The classroom computer has MATLAB installed but no compatibility is guaranteed. The projector has a VGA port and you may need a VGA adaptor for your laptop. During the presentation, you will be asked to present your algorithm and the routes which it plans (bring your learned costmaps with you). Clearly presenting your approach and having good algorithm performance are equally important. \
+}
