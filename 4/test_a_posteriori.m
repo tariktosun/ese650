@@ -162,14 +162,46 @@ classdef test_a_posteriori < matlab.unittest.TestCase
             Yi = to_cell_indices(Y, params);
             map = write_to_map( map, to_cell_indices(xi,params), Yi, 100, params);
             %
+            figure;
             for i=1:100
                 i
                 d = indexData(D,i);
                 [a_posteriori_weights, map] = a_posteriori( slam_state, map, d, params );
                 slam_state.weights = a_posteriori_weights;
-            end
+                plot_world( xi, map, params );
+                drawnow();
+            end  
+            %imshow(map);
+        end
+        %% Test step_slam (prior and posterior steps)
+        %% Test full a_posteriori:
+        function test_step_slam(testCase)
+            params = create_params();
+            params.sigmaXY = 0;  % No noise in this test.
+            params.sigmaTheta =0; 
+            params.NP = 1;       % just one particle
+            map = create_map( params );
+            slam_state = initialize_slam_state(params);
+            D = testCase.data{1};
+            %
+            i=500;
+            d = indexData(D,i);
+            slam_state.time = d.ts;
+            xi = [0 0 0]';
+            Y = transform_range( xi, d.ranges, d.angles);
+            Yi = to_cell_indices(Y, params);
+            map = write_to_map( map, to_cell_indices(xi,params), Yi, 100, params);
+            %
+            N = 4000;
+            xs = zeros(3,N);
             figure;
-            imshow(map);
+            for i=500:N
+                d = indexData(D,i);
+                [pos, map, slam_state] = step_slam( d, slam_state, map, params );
+                plot_world( pos, map, params );
+                x(:,i) = pos;
+                drawnow();
+            end  
         end
     end
     

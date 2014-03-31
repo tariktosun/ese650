@@ -3,6 +3,9 @@
 \begin_document
 \begin_header
 \textclass article
+\begin_preamble
+\usepackage{listings}
+\end_preamble
 \use_default_options true
 \maintain_unincluded_children false
 \language english
@@ -49,8 +52,8 @@
 \bottommargin 1in
 \secnumdepth 3
 \tocdepth 3
-\paragraph_separation indent
-\paragraph_indentation default
+\paragraph_separation skip
+\defskip medskip
 \quotes_language english
 \papercolumns 1
 \papersides 1
@@ -79,6 +82,70 @@ Introduction
 \begin_layout Standard
 In this assignment, I implemented Simultaneous Localization and Mapping
  (SLAM) with a particle filter.
+ The file step_slam.m steps the outer loop of my algorithm, and is summarized
+ below:
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hrule
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand input
+filename "html/step_slam.tex"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hrule
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+vspace{0.5cm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As with other Bayes filters, the particle filter has two main parts: the
+ prior state estimate (propagating the system forward according to a motion
+ model or transition model) and the posterior state estimate (which updates
+ the state estimate to better align with the observations).
+ In the sections following, I will explain the details of these two steps,
+ and present my results on the training and test data sets.
 \end_layout
 
 \begin_layout Section*
@@ -94,36 +161,94 @@ This project involved combining data from encoders, an IMU, a Hokuyo LIDAR,
  I dealt with this by synchronizing all the sensor data to the Hokuyo times,
  by iterating over the Hokuyo samples and selecting the closest data point
  for each sensor to the Hokuyo sample.
+ I used 20 particles for most data sets.
+ Given more time, I would have vectorized my code and used more particles,
+ but unfortunately without this optimization 20 particles was the most I
+ could use and compute solutions in a reasonable amount of time.
+ Resampling was implemented as presented in class, when the effective number
+ of samples 
+\begin_inset Formula $N_{eff}=\frac{\left(\sum w_{k}\right)^{2}}{\sum w_{k}^{2}}$
+\end_inset
+
+ was below 
+\begin_inset Formula $\alpha N_{samples}$
+\end_inset
+
+.
+ I used 
+\begin_inset Formula $\alpha=0.5$
+\end_inset
+
+ for the results presented here.
 \end_layout
 
 \begin_layout Standard
-I used 
-\color red
-<numparticles>
-\color inherit
- particles in this assignment.
- I resampled particles when 
-\color red
-<resampling condition>
-\color inherit
-.
-\end_layout
+My map was an int8 array representing an area of 70mx70m at a resolution
+ of 10cm.
+ I used a prior of 0.85 for 
+\begin_inset Formula $p(laser\, says\, filled\,|\, cell\, actually\, filled)$
+\end_inset
 
-\begin_layout Standard
-I represented the map as an int8 array.
- I used dimensions 
-\color red
-<dimensions>
-\color inherit
- and resolution 
-\color red
-<resolution>
-\color inherit
+ and 0.9 for 
+\begin_inset Formula $p(laser\, says\, empty\,|\, cell\, actually\, empty)$
+\end_inset
+
 .
+ In the code presented in the introduction, 
+\family typewriter
+slam_state
+\family default
+, 
+\family typewriter
+data
+\family default
+, and 
+\family typewriter
+params
+\family default
+ are all structs.
+ 
+\family typewriter
+slam_state
+\family default
+ includes the particles, their weights, and the current time (for gyro integrati
+on).
+ 
+\family typewriter
+data
+\family default
+ includes all data fields for the current time step, including imu, encoders,
+ and Hokuyo measurements.
+ 
+\family typewriter
+params
+\family default
+ includes all parameters of the particle filter; see 
+\family typewriter
+create_params.m
+\family default
+ for the full list.
 \end_layout
 
 \begin_layout Section*
 Prior estimate
+\end_layout
+
+\begin_layout Standard
+
+\family typewriter
+a_priori.m
+\family default
+ propagates the particles forward according to the motion model, and introduces
+ process noise to 
+\begin_inset Quotes eld
+\end_inset
+
+jitter
+\begin_inset Quotes erd
+\end_inset
+
+ the particles.
 \end_layout
 
 \begin_layout Subsection*
@@ -136,6 +261,260 @@ Sensor data from the robot encoders and IMU were available for odometry
  Encoder odometry alone was not enough to get good results.
  When combined with the IMU for yaw estimation (through simple integration),
  odometry was fairly accurate.
+ Plots of integrated odometry for the training set are shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "integrated-odometry"
+
+\end_inset
+
+.
+ The mathematics of my odometry model are summarized below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\Delta\theta=\omega_{yaw}*\Delta t
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\Delta s=\frac{e_{r}+e_{l}}{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\Delta\left[\begin{array}{c}
+x\\
+y
+\end{array}\right]=\left[\begin{array}{c}
+\cos\Delta\theta\\
+\sin\Delta\theta
+\end{array}\right]\Delta s
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $\omega_{yaw}$
+\end_inset
+
+ is the gyro yaw rate and 
+\begin_inset Formula $e_{r}$
+\end_inset
+
+ and 
+\begin_inset Formula $e_{l}$
+\end_inset
+
+ are the current left and right encoder values.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-20.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-21.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-22.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+22
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-23.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-24.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+23
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+24
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Pure Odometry Integration
+\begin_inset CommandInset label
+LatexCommand label
+name "integrated-odometry"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection*
@@ -143,15 +522,292 @@ Process Noise
 \end_layout
 
 \begin_layout Standard
-Process noise was applied as gaussian random noise after the odometry update.
+Process noise was modeled as gaussian random noise applied to the encoder
+ and gyroscope readings (process noise was applied before the process model).
+ In the results presented, I used a standard deviation of 5 for the encoders
+ and 0.36 for the gyroscope.
 \end_layout
 
 \begin_layout Section*
 Posterior estimate - LIDAR correlation
 \end_layout
 
+\begin_layout Standard
+In the posterior update step, a Hokuyo-to-world transform is computed for
+ each of the particles.
+ These transforms are used to project the scan data onto the current map.
+ The correlation of the putative scan for each particle with the current
+ map is computed using the provided mex function 
+\family typewriter
+map_correlation
+\family default
+.
+ We use this as a measure of confidence in that particle's prediction: if
+ the scan projection of a particle aligns well with the current map, the
+ particle probably provides a good estimate.
+ Posterior weights are computed by adding the minimum of the particle scan-map
+ correlations to each correlation value (ensuring that none will be negative),
+ multiplying the prior weights by these correlation values, and rescaling
+ to sum to 1.
+ The map is then updated by adding the weighted sum of the transformed scans
+ to the map, incrementing cells that are perceived as filled and decrementing
+ those perceived as empty (using 
+\family typewriter
+getMapCellsFromRay.cpp
+\family default
+ to determine empty cells).
+\end_layout
+
+\begin_layout Section*
+Results
+\end_layout
+
+\begin_layout Standard
+Some maps from the training and testing set are shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Results"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/data20-10particles-noResample.pdf
+	display false
+	width 45text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/test1.pdf
+	display false
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training set 20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test set 1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/test2.pdf
+	display false
+	width 45text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/test3.pdf
+	display false
+	width 35text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test set 2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test set 3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Results
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Results"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section*
 Analysis and Conclusion
+\end_layout
+
+\begin_layout Standard
+Odometry integration alone was enough to produce good results for the training
+ set, but for the test set it was necessary to close the loop with the particle
+ filter to get good results (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:post-modern-surrealist"
+
+\end_inset
+
+).
+ On the test set, my filter performed well over short time periods, but
+ often suffered from map shift over the course of a data set.
+ As a result, we see curved hallways (test set 3), and sometimes bifurcations
+ at points where the robot turned sharply and its orientation was estimated
+ incorrectly (test set 1).
+\end_layout
+
+\begin_layout Standard
+I found that my results depended heavily on my choice of parameters, including
+ the laser scan priors, noise distributions, and number of particles.
+ I found it challenging to tune these parameters in a methodical way, so
+ tuning involved an extended period of trial-and-error.
+ I think that if I had been able to use more particles (on the order of
+ 100), performance would have been better and also more robust to parameter
+ tweaks.
+ I think my biggest mistake in this assignment was spending time tweaking
+ parameters rather than vectorizing my particle computations, which could
+ have allowed me to use many more particles.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/test1-5particles-noResample.pdf
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Odometry integration on the test set produces post-modern surrealist mappings
+ of GRW.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:post-modern-surrealist"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body

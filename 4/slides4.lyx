@@ -1,0 +1,459 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass beamer
+\begin_preamble
+% Presentation on qualifier for PPR meeting
+% 2013-05-13
+
+%\documentclass{beamer}
+
+%\usetheme{Warsaw}
+
+
+%\usepackage{graphicx}
+\usepackage{float}%\usepackage{amssymb}
+%\usepackage{color}
+%\usepackage{verbatim}
+\usepackage{algorithm2e}%\usepackage{program}
+\usepackage{listings}
+%\usepackage{setspace}
+%\usepackage{enumerate}
+\usepackage{comment}\usepackage{pdfsync}%\usepackage{enumitem}
+%\usepackage{multicol}
+
+%\usepackage{enumitem}
+%\usepackage{calc}
+%\SetLabelAlign{parright}{\parbox[t]{\labelwidth}{\raggedleft#1}}
+
+\newcommand{\figsize}{10in}
+\newcommand{\highlight}[1]{\structure{\textbf{#1}}}
+\end_preamble
+\options handout
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding default
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 2
+\use_esint 1
+\use_mhchem 0
+\use_mathdots 0
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+ESE 650 Homework 4 - Particle Filter SLAM
+\end_layout
+
+\begin_layout Author
+Tarik Tosun
+\end_layout
+
+\begin_layout BeginFrame
+Code Summary
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "html/step_slam.tex"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout EndFrame
+
+\end_layout
+
+\begin_layout BeginFrame
+Odometry
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-20.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-21.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-22.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+22
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-23.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/odometry-integrated-24.png
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+23
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+24
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Pure Odometry Integration
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout EndFrame
+
+\end_layout
+
+\begin_layout BeginFrame
+Results
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/data20-10particles-noResample.pdf
+	width 45text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/test1-10particles-resampled.pdf
+	width 45text%
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Training set 20
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Test set 1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout EndFrame
+
+\end_layout
+
+\begin_layout BeginFrame
+Analysis
+\end_layout
+
+\begin_layout Itemize
+Odometry worked well on training set, but not test set
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Suspicious
+\end_layout
+
+\begin_layout Itemize
+But noise characteristics were the same
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Getting the parameters right is important
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Noise characteristics
+\end_layout
+
+\begin_layout Itemize
+Number of particles
+\end_layout
+
+\begin_layout Itemize
+Resample rate
+\end_layout
+
+\begin_layout Itemize
+Laser priors
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Possible Improvements:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Better parameter tuning
+\end_layout
+
+\begin_layout Itemize
+Pruning scans on hills
+\end_layout
+
+\begin_layout Itemize
+Better measure of correlation
+\end_layout
+
+\end_deeper
+\begin_layout EndFrame
+
+\end_layout
+
+\end_body
+\end_document
