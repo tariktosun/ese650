@@ -15,7 +15,7 @@ map_list = double(reshape( map, nrows*ncols, 3 ));
 [idx, centroids, ~, distance_idx] = kmeans( map_list ,nColors); %,'distance', 'sqEuclidean', 'Replicates',3);
 %% reshape and return
 labels = reshape(idx,nrows,ncols);
-distances = reshape(idx, nrows, ncols, nColors);
+distances = reshape(distance_idx, [nrows, ncols, nColors]);
 %figure;
 %colormap = varycolor(10);
 %imshow(pixel_labels, colormap), title('image labeled by cluster index');
