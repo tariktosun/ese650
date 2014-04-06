@@ -49,12 +49,12 @@ classdef test_features < matlab.unittest.TestCase
             blurred = imfilter(BW2,G,'same');
             figure, imshow(blurred)
         end
-        %% test extract_features and cost_function
-        function test_cost_function(testCase)
+        %% test extract_features and generate_cost_map
+        function test_cost_map(testCase)
             feature_map = extract_features( testCase.map, [] );
             testCase.assertTrue( all(all( (sum( feature_map,3 )-1)<0.0001 )) )
             model.weights = ones(1, size(feature_map,3));
-            cost_map = cost_function( feature_map, model, [] );
+            cost_map = generate_cost_map( feature_map, model, [] );
             testCase.assertTrue( all(all( cost_map == sum(feature_map,3) )) );
         end
         %% function test plan_path:
@@ -62,7 +62,7 @@ classdef test_features < matlab.unittest.TestCase
             feature_map = extract_features( testCase.map, [] );
             %testCase.assertTrue( all(all( (sum( feature_map,3 )-1)<0.0001 )) )
             model.weights = ones(1, size(feature_map,3));
-            cost_map = cost_function( feature_map, model, [] );
+            cost_map = generate_cost_map( feature_map, model, [] );
             %testCase.assertTrue( all(all( cost_map == sum(feature_map,3) )) );
             start = [50, 50];
             goal = [200, 1000];
