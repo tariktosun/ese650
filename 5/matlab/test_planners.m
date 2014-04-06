@@ -1,4 +1,4 @@
-classdef test_features < matlab.unittest.TestCase
+classdef test_planners < matlab.unittest.TestCase
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -26,10 +26,11 @@ classdef test_features < matlab.unittest.TestCase
     end
     
     methods (Test)
-        function test_djikstra_basic(testCase)
-            start = [50, 50];
-            goal = [200, 1000];
-            path = plan_path( testCase.cost_map, start, goal, [] );        
+        function test_dijkstra_basic(testCase)
+            start = [100, 300];
+            goal = [250, 800];
+            [path, ctg] = plan_path( testCase.cost_map, start, goal, [] );
+            plot_path( path, start, goal, testCase.cost_map, ctg );
         end
     end
     

@@ -1,16 +1,15 @@
-function path = plan_path( cost_map, start, goal, params )
+function [path, ctg] = plan_path( cost_map, start, goal, params )
 % path = plan_path( cost_map, start, goal, params )
 % Plans path from start to goal given costmap.  start and goal must be
 % [x,y] pairs.
 %
 %% get cost-to-go
-goal = [250 1000];
 tic;
 ctg = dijkstra_matrix(cost_map ,goal(1),goal(2));
 toc
 
 %[ip1, jp1] = dijkstra_path(ctg, costs, 1, 1);
-[ip2, jp2] = dijkstra_path2(ctg, cost_map, 1, 1);
+[ip2, jp2] = dijkstra_path2(ctg, cost_map, start(1), start(2));
 path = [ip2, jp2];  % Note: plotting appears xy backwards?
 %% Plotting from example:
 %{
