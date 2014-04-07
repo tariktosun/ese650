@@ -3,9 +3,11 @@ params = struct();
 %% Map
 % image resize factor:
 params.resize_factor = 0.1;
+%% Features
+params.num_clusters = 16;
 %% Gradient ascent:
-params.step_size = 0.1;
+params.step_size = 0.001;
 params.max_iter = 100;
-params.convergence_thresh = 0.001;
+params.convergence_thresh = 100;
 %% plotting:
 params.plot_on = true;

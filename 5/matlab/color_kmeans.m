@@ -8,8 +8,8 @@ function [labels, centroids, distances] = color_kmeans( map, params )
 G = fspecial('gaussian',[5 5],2);
 %# Filter it
 map = imfilter(map,G,'same');
-%% Extract 10 colors using kmeans
-nColors = 10;
+%% Extract colors using kmeans
+nColors = params.num_clusters;
 [nrows,ncols,~] = size( map );
 map_list = double(reshape( map, nrows*ncols, 3 ));
 [idx, centroids, ~, distance_idx] = kmeans( map_list ,nColors); %,'distance', 'sqEuclidean', 'Replicates',3);

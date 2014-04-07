@@ -17,7 +17,7 @@ classdef test_train < matlab.unittest.TestCase
             %{
             bigmap = imread('aerial_color.jpg');
             map = imresize(bigmap, params.resize_factor);
-            feature_map = extract_features( map, [] );
+            feature_map = extract_features( map, params );
             %}
             load map.mat;
             %
