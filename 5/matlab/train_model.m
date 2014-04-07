@@ -14,13 +14,13 @@ for j=1:params.max_iter
         des = example_paths{i};
         start = des(1,:);
         goal = des(end,:);
-        [opt, ctg] = plan_path( testCase.cost_map, start, goal, [] );
+        [opt, ctg] = plan_path( cost_map, start, goal, [] );
         if params.plot_on
             figure
             title(['Example ' int2str(i)]);
             plot_path( opt, start, goal, cost_map, ctg );
             hold on
-            plot_path( des, start, goal );
+            plot_path( des, start, goal ,'m');
             hold off
         end
         % compute gradient:

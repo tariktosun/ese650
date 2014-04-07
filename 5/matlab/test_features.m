@@ -18,7 +18,7 @@ classdef test_features < matlab.unittest.TestCase
     methods (Test)
         function test_kmeans_gauss(testCase)
             params = create_params();
-           %% Gaussian blur:
+            %% Gaussian blur:
             %# Create the gaussian filter with hsize = [5 5] and sigma = 2
             G = fspecial('gaussian',[5 5],2);
             %# Filter it
@@ -31,7 +31,7 @@ classdef test_features < matlab.unittest.TestCase
             [nrows,ncols,~] = size( map );
             map_list = double(reshape( map, nrows*ncols, 3 ));
             [cluster_idx, cluster_center] = kmeans( map_list ,nColors); %,'distance', 'sqEuclidean', 'Replicates',3);
-           %%
+            %%
             pixel_labels = reshape(cluster_idx,nrows,ncols);
             colormap = varycolor(10);
             figure;

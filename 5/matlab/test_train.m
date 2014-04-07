@@ -1,4 +1,4 @@
-classdef test_planners < matlab.unittest.TestCase
+classdef test_train < matlab.unittest.TestCase
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -8,20 +8,30 @@ classdef test_planners < matlab.unittest.TestCase
         feature_map
         cost_map
         model
+        examples
     end
     
     methods (TestMethodSetup)
         function setup(testCase)
             params = create_params();
-            testCase.bigmap = imread('aerial_color.jpg');
-            testCase.map = imresize(testCase.bigmap, params.resize_factor);
+            %{
+            bigmap = imread('aerial_color.jpg');
+            map = imresize(bigmap, params.resize_factor);
+            feature_map = extract_features( map, [] );
+            %}
+            load map.mat;
             %
-            feature_map = extract_features( testCase.map, [] );
+            testCase.feature_map = feature_map;
+            testCase.bigmap = bigmap;
+            testCase.map = map;
+            %
             model.weights = ones(1, size(feature_map,3));
             cost_map = generate_cost_map( feature_map, model, [] );
-            testCase.feature_map = feature_map;
             testCase.model = model;
             testCase.cost_map = cost_map;
+            %
+            load examples.mat
+            testCase.examples = examples;
         end
     end
     
@@ -35,8 +45,8 @@ classdef test_planners < matlab.unittest.TestCase
         end
         %% test train_model.m
         function test_train_model_basic(testCase)
-            
-            
+            params = create_params()
+            [cost_map, model] = train_model( testCase.feature_map, testCase.model, testCase.examples,  params);
         end
     end
     

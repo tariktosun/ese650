@@ -15,7 +15,7 @@ if plot_cost
 end
 hold on;
 %plot(jp1, ip1, 'b-', jp2, ip2, 'r-');
-plot(path(:,2), path(:,1));
+plot(path(:,2), path(:,1), pltopts);
 plot(start(2), start(1), 'ro');
 plot(goal(2), goal(1), 'g*');
 hold off;
