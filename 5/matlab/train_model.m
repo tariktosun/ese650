@@ -45,7 +45,7 @@ for j=1:params.max_iter
     if j>1
         avg_pcf = PCF/N
         if avg_pcf < params.convergence_thresh
-            %break
+            break
         end
     end
     % take a step:

@@ -68,6 +68,13 @@ classdef test_features < matlab.unittest.TestCase
             goal = [200, 1000];
             path = plan_path( cost_map, start, goal, [] );
         end
+        %% test indexed image:
+        function test_indexed(testCase)
+            [ind, cmap] = rgb2ind(testCase.map,32);
+            figure();
+            imagesc(ind);
+            
+        end
     end
     
 end
