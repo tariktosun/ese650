@@ -45,10 +45,28 @@ classdef test_train < matlab.unittest.TestCase
         end
         %% test train_model.m
         function test_train_model_basic(testCase)
-            params = create_params()
+            params = create_params();
             [cost_map, model] = train_model( testCase.feature_map, testCase.model, testCase.examples,  params);
+        end
+        %% test easy map:
+        function test_easy_map(testCase)
+            params = create_params();
+            params.num_clusters = 2;
+            params.resize_factor = 1;
+            load easy_map
+            load easy_examples
+            model.weights = ones(1, size(feature_map,3));
+            [cost_map, model] = train_model( feature_map, model, examples,  params);
+            % Check that it generalizes:
+            %start = [435, 227];   goal = [375, 321];
+            start = [201, 505];   goal = [73, 386];
+            [path, ctg] = plan_path( cost_map, start, goal, [] );
+            figure;
+            plot_path( path, start, goal, cost_map, ctg, 'b' );
+            hold on;
+            title('Generalized');
+            hold off;
         end
     end
     
 end
-

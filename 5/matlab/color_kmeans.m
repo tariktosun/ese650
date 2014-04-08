@@ -12,7 +12,7 @@ map = imfilter(map,G,'same');
 nColors = params.num_clusters;
 [nrows,ncols,~] = size( map );
 map_list = double(reshape( map, nrows*ncols, 3 ));
-[idx, centroids, ~, distance_idx] = kmeans( map_list ,nColors); %,'distance', 'sqEuclidean', 'Replicates',3);
+[idx, centroids, ~, distance_idx] = kmeans( map_list ,nColors, 'emptyaction', 'singleton'); %,'distance', 'sqEuclidean', 'Replicates',3);
 %% reshape and return
 labels = reshape(idx,nrows,ncols);
 distances = reshape(distance_idx, [nrows, ncols, nColors]);
