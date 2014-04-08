@@ -6,7 +6,7 @@ function [cost_map, model] = train_model( feature_map, model, example_paths, par
 w = model.weights;  % initial model
 N = numel(example_paths);
 %%
-
+foo = false;
 if params.plot_on
     figure;
 end
@@ -42,14 +42,22 @@ for j=1:params.max_iter
         %NUMPTS = NUMPTS + numpts;
     end
     % check termination:
+    %{
     if j>1
         avg_pcf = PCF/N
         if avg_pcf < params.convergence_thresh
             break
         end
     end
+    %}
+    if foo == true
+        break
+    end
+    
+    
     % take a step:
-    w = w - params.step_size * (G' + params.regularization*w);
+    %w = w - params.step_size * (G' + params.regularization*w);
+    w = w - params.step_size * G';
     model.weights = w;
 end
 %% return
