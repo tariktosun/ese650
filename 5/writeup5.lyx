@@ -1,0 +1,586 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{listings}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1in
+\topmargin 1in
+\rightmargin 1in
+\bottommargin 1in
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+ESE 650 Homework 5 - Reinforcement Learning
+\end_layout
+
+\begin_layout Author
+Tarik Tosun
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Standard
+In this assignment, I implemented reinforcement learning for path planning.
+ The program learns to plan appropriate paths for different transportation
+ modalities (driving and walking) by imitating paths chosen by a human.
+ Path planning is done using Dijkstra's algorithm and a cost map, where
+ the cost is a linear function of a feature vector extracted from each pixel
+ of the map (a JPEG image of Penn's campus).
+ I used a method based on the LEARCH algorithm presented in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-1"
+
+\end_inset
+
+ and in class to learn optimal cost function parameters by gradient descent.
+\end_layout
+
+\begin_layout Section*
+Algorithm and Feature Set
+\end_layout
+
+\begin_layout Subsection*
+Cost Function and Training
+\end_layout
+
+\begin_layout Standard
+I used the loss function and cost function presented in class:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+J=\sum_{t}C\left(\vec{x}_{des}(t)\right)-\sum_{t}C\left(\vec{x}_{opt}(t)\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+C\left(\vec{x}(t)\right)=\exp\left(\sum_{i}w_{i}h_{i}\left(\vec{x}(t)\right)\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The cost function is the exponential of a linear function of the feature
+ vector at a pixel, and the loss function is the difference between the
+ cumulative costs of the desired and optimal path between two points.
+ We find 
+\begin_inset Formula $\vec{w}^{*}=\arg\min_{\vec{w}}J$
+\end_inset
+
+ through an iterative gradient descent procedure:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left(\nabla_{\vec{w}}J\right)_{i}=\sum_{t}C\left(\vec{x}_{des}(t)\right)h_{i}\left(\vec{x}_{opt}(t)\right)-\sum_{t}C\left(\vec{x}_{opt}(t)\right)h_{i}\left(\vec{x}_{opt}(t)\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\vec{w}_{new}\gets\vec{w}_{old}+\eta\vec{\left(\nabla_{w}J\right)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I found that my planner was able to generalize to new paths without using
+ cost augmentation, so I did not use it in the results presented here.
+\end_layout
+
+\begin_layout Subsection*
+Features
+\end_layout
+
+\begin_layout Standard
+To generate a feature vector at each pixel in the image, I ran K-Means on
+ image with 
+\begin_inset Formula $K=16$
+\end_inset
+
+, establishing a 16-color 
+\begin_inset Quotes eld
+\end_inset
+
+palette
+\begin_inset Quotes erd
+\end_inset
+
+ to describe a given pixel.
+ Rather than labeling each pixel with a single cluster, I used the inverse
+ exponential of the distance from the pixel to each cluster center as features.
+ My thinking was this continuous feature space would have more descriptive
+ power than a discrete set of labels, and would allow my linear classifier
+ to do the discrimination rather than K-Means.
+\end_layout
+
+\begin_layout Standard
+Looking at the map, I noticed that most of the semantically important regions
+ of the map (i.e.: regions corresponding to roads, buildings, trees, etc)
+ consisted of a patchwork of very differently colored pixels, but on average
+ had a fairly consistent color.
+ In order to reduce the high-frequency content of the image, I applied a
+ gaussian blur before performing K-Means.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:kmeans-map"
+
+\end_inset
+
+ shows the map labeled by cluster.
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename images/kmeans-16.png
+	display false
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Map labeled using K-Means, K=16.
+ Each color in the image corresponds to a different label.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:kmeans-map"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Results
+\end_layout
+
+\begin_layout Standard
+Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Driving-costmap"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Walking-costmap"
+
+\end_inset
+
+ show the cost maps from training on driving and walking modalities.
+ Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "driving-examples"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "walking-examples"
+
+\end_inset
+
+ show some example paths planned for driving and walking.
+ To try some paths for yourself, execute the script 
+\family typewriter
+\size large
+RUN_ME.m
+\family default
+\size default
+ in my submission, which will allow you to (quickly and easily) plan paths
+ on the map.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/road_costmap.png
+	display false
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Driving costmap 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Driving-costmap"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/pedestrian_costmap.png
+	display false
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Walking costmap 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Walking-costmap"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename images/several_road_examples.png
+	display false
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Planning examples for driving modality.
+ Three examples are shown: A long path from west campus to the tennis courts,
+ a medium-length path from the hospital to the Fischer library, and a short
+ path around the triangular corner.
+ 
+\begin_inset CommandInset label
+LatexCommand label
+name "driving-examples"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename images/several_walking_examples.png
+	display false
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Planning examples for walking modality.
+ Two examples are shown, wharton - to - drexel and hospital - to - tennis
+ courts 
+\begin_inset CommandInset label
+LatexCommand label
+name "walking-examples"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Analysis and Conclusion
+\end_layout
+
+\begin_layout Standard
+The algorithm performs fairly well for the driving modality and can plan
+ long paths that stay on roads.
+ However, because of the similar color of the roads and rooftops, the driving
+ planner sometimes produces paths that go on the top of buildings (for example,
+ the medium-length path in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "driving-examples"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The results in the walking modality tend to be less consistent than the
+ driving modality.
+ In my training set for walking, I allowed the pedestrian to walk anywhere
+ that was not a building or a road.
+ I think that because the training set was very diverse, the cost map was
+ less discriminative than for driving, resulting in paths that primarily
+ lay in the trees but sometimes crossed over roads and buildings as well.
+\end_layout
+
+\begin_layout Standard
+Inspecting the cost maps (Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Driving-costmap"
+
+\end_inset
+
+ and 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Walking-costmap"
+
+\end_inset
+
+), we see that the driving costmap is low cost (dark blue) on all the roads,
+ but also dark blue on the tops of the dark buildings.
+ Fortunately, the sidewalks show up as very high cost (red and yellow),
+ and usually prevent the driving paths from straying off the roads.
+ In the walking costmap, trees and grass have the lowest cost (dark blue),
+ but many buildings and some stretches of road are fairly low-cost as well
+ (light blue / green).
+ As a result, the walking planner is less discriminative about crossing
+ buildings and roads than we might like.
+\end_layout
+
+\begin_layout Standard
+I think my results could have been made more consistent by expanding my
+ feature set to include more sophisticated features.
+ For example, edge or corner detection could have been used to classify
+ buildings and roads more accurately, allowing my planner to avoid confusing
+ buildings for roads.
+ For the walking modality, I could have constructed my training set more
+ carefully to include only areas where pedestrians can definitely walk,
+ like sidewalks and footpaths.
+ In the future, it would also be interested to see if cost augmentation
+ would improve the quality of my results.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-1"
+
+\end_inset
+
+Ratliff, N., Silver, D., & Bagnell, J.
+ (2009).
+ Learning to search: Functional gradient techniques for imitation learning.
+ Autonomous Robots, 1–36.
+ Retrieved from http://link.springer.com/article/10.1007/s10514-009-9121-3
+\end_layout
+
+\end_body
+\end_document

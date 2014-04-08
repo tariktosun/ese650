@@ -154,6 +154,10 @@ status open
 \end_layout
 
 \begin_layout Itemize
+Gaussian blur
+\end_layout
+
+\begin_layout Itemize
 K-means with 16 RGB color clusters
 \end_layout
 
@@ -174,17 +178,18 @@ Used
 \end_layout
 
 \begin_layout Standard
+\align center
 \begin_inset Float figure
 wide false
 sideways false
 status open
 
 \begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Training Convergence
-\end_layout
+\align center
+\begin_inset Graphics
+	filename images/road_costmap.png
+	display false
+	width 100text%
 
 \end_inset
 
@@ -192,7 +197,43 @@ Training Convergence
 \end_layout
 
 \begin_layout Plain Layout
+Driving Costmap
+\end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout EndFrame
+
+\end_layout
+
+\begin_layout BeginPlainFrame
+
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/pedestrian_costmap.png
+	display false
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Pedestrian Costmap
 \end_layout
 
 \end_inset
@@ -238,11 +279,11 @@ status open
 \end_layout
 
 \begin_layout Itemize
-Works well for unobstructed roads
+Works well for most roads
 \end_layout
 
 \begin_layout Itemize
-Obstructions cause big problems
+Has a hard time determining where pedestrians can walk
 \end_layout
 
 \begin_layout Standard
