@@ -2,8 +2,9 @@ function example_path = draw_example( map, params )
 % example_path = draw_example( map, params )
 % Allows you to draw an example path on the map.
 %
-figure
-imshow( map );
+%figure
+%imshow( map );
+%pause;
 waypoints = ginput();
 x = waypoints(:,2);
 y = waypoints(:,1);

@@ -209,26 +209,10 @@ Training Convergence
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
+\align center
 
-\begin_layout Plain Layout
-\begin_inset Caption
-
-\begin_layout Plain Layout
-Training Convergence
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+\size large
+Interactive Path Planning...
 \end_layout
 
 \begin_layout EndFrame

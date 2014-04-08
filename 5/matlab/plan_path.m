@@ -9,7 +9,7 @@ ctg = dijkstra_matrix(cost_map ,goal(1),goal(2));
 toc
 
 %[ip1, jp1] = dijkstra_path(ctg, costs, 1, 1);
-[ip2, jp2] = dijkstra_path2(ctg, cost_map, start(1), start(2));
+[ip2, jp2] = dijkstra_path(ctg, cost_map, start(1), start(2));
 path = [ip2, jp2];  % Note: plotting appears xy backwards?
 %% Plotting from example:
 %{
