@@ -27,13 +27,13 @@ classdef test_features < matlab.unittest.TestCase
             %# Display
             %imshow(map)
             %% Extract 10 colors using kmeans
-            nColors = 10;
+            nColors = 16;
             [nrows,ncols,~] = size( map );
             map_list = double(reshape( map, nrows*ncols, 3 ));
             [cluster_idx, cluster_center] = kmeans( map_list ,nColors); %,'distance', 'sqEuclidean', 'Replicates',3);
             %%
             pixel_labels = reshape(cluster_idx,nrows,ncols);
-            colormap = varycolor(10);
+            colormap = varycolor(16);
             figure;
             imshow(pixel_labels, colormap), title('image labeled by cluster index');
         end
@@ -67,6 +67,13 @@ classdef test_features < matlab.unittest.TestCase
             start = [50, 50];
             goal = [200, 1000];
             path = plan_path( cost_map, start, goal, [] );
+        end
+        %% test indexed image:
+        function test_indexed(testCase)
+            [ind, cmap] = rgb2ind(testCase.map,32);
+            figure();
+            imagesc(ind);
+            
         end
     end
     
