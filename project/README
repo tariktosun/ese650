@@ -1,0 +1,13 @@
+This directory contains an encapsulation
+of the Open Dynamics Engine (ODE) simulation library
+for Matlab (Mac OS X and Linux).
+
+To run a simulation of a 3D hopping robot,
+just run hopper.m
+
+hopperInit: Initialize robot body and geometry
+hopperReset(a0): Reset robot position with starting angle a0
+hopperStep(dt): Run simulation steps for dt time
+hopperState: Returns structure containing state of robot
+hopperControl1(hip1, hip2, vankle): Simple PD hip control, set ankle vel
+hopperPlot: Simple plotting routine for robot
