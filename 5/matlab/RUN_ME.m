@@ -1,5 +1,5 @@
+load road_model
 %load pedestrian_model
-load pedestrian_model
-load map
+load smallmap
 %%
 interactive_planner( map, cost_map );

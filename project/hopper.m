@@ -29,6 +29,7 @@ for isim = 1:1000,
   
   %hopperControl1(hip1, hip2, vankle);
   hopperControl2(hip1, hip2, vankle);
+  %raibertController( 0, 0, vankle );
 
   hopperPlot;
   title(sprintf('Step: %d', isim));

@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <ode/ode.h>
+//typedef uint16_t char16_t;
 #include "mex.h"
 
 #define MAX_CONTACTS 32
