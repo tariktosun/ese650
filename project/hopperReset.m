@@ -23,7 +23,7 @@ odeAPI('bodySetLinearVel', HOPPER.leg.body, [0 0 0]);
 odeAPI('bodySetAngularVel', HOPPER.leg.body, [0 0 0]);
 
 odeAPI('bodySetPosition', HOPPER.foot.body, ...
-       [0 0 HOPPER.top.z0-HOPPER.leg.length]);
+       [0 0 HOPPER.top.z0-(HOPPER.leg.length+HOPPER.ankle.length)]);
 odeAPI('bodySetRotation', HOPPER.foot.body, r0);
 odeAPI('bodySetLinearVel', HOPPER.foot.body, [0 0 0]);
 odeAPI('bodySetAngularVel', HOPPER.foot.body, [0 0 0]);
