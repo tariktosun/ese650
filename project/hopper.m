@@ -10,6 +10,7 @@ end
 
 %a0 = 2*pi/20*randn(1);
 a0 = -pi/2.2;
+%a0 = -pi/3;
 hopperReset(a0);
 
 kick_thresh = 0.1;
