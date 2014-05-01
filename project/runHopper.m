@@ -39,10 +39,10 @@ for isim = 1:N,
   
   if useQ
       [Qval, gains] = getGains(s, Qdata);
+      gainHistory(isim, :) = gains;
+      Qhistory(isim) = Qval;
   end
   raibertController( 0, 0, vankle, gains );
-  gainHistory(isim, :) = gains;
-  Qhistory(isim) = Qval;
 
   if makePlot
       clf
