@@ -29,4 +29,5 @@ anklePositionRate = [ankle.positionRate];
 %
 foot = [states.foot];
 footPosition = [foot.position];
-t = 0:dt:(N-1)*dt;
+%
+t = 0:dt:(numel(states)-1)*dt;

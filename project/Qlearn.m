@@ -10,7 +10,7 @@ for r = 1:numRepetitions
     deltaQ = zeros(size(Qvals));
     for i=1:Nep
         X = episodes{i};   % states and actions
-        Nsteps = numel(X);
+        Nsteps = size(X,1);
         for t=1:Nsteps-1
             deltaQ = deltaQ + Qupdate( X(t,:), X(t+1,:), beta, centers, Qvals, params );
         end

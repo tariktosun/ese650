@@ -13,6 +13,12 @@ for isim = 1:N,
   hopperStep(dt);
 
   s = hopperState;
+  % test for failure:
+  if failureCriterion(s)
+      states = states(1:isim);
+      break;
+  end
+  
   states(isim) = s;
   if (s.foot.position(3) < kick_thresh)
   % Extend:
@@ -30,8 +36,9 @@ for isim = 1:N,
       axis([s.top.position(1)+[-2 2] s.top.position(2)+[-2 2] 0 3]);
       view(30, 15);
       grid on;
+      drawnow
   end
-  drawnow
+  
   
 end
 
