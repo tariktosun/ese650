@@ -1,4 +1,8 @@
-function raibertController( vxdes, vydes, vankle);
+function raibertController( vxdes, vydes, vankle, gains);
+%% 
+Kfoot = gains(1);
+pHip_gain = gains(2);
+dHip_gain = gains(3);
 %% Extract hopper state    
 global HOPPER
 s = hopperState;
@@ -20,10 +24,10 @@ InFlight = (vankle<=0);
 InStance = ~InFlight;
 %% Gains and other constants
 % Hip angle rate gains
-pHip = (InFlight)*30.0;                          
-dHip = -(InFlight)*0.1;  % Derivative gain only when ankle slides outwards
+pHip = (InFlight)*pHip_gain;                          
+dHip = -(InFlight)*dHip_gain;    
 % foot placement gain
-Kfoot = 0.15;
+%Kfoot = 0.15;
 % Body attitude gains, active when foot is in contact with ground.
 pAtt = (InStance) * 3;
 dAtt = (InStance) * 0.1;

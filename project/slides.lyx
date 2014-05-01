@@ -343,7 +343,7 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset Formula $r(t)=1-\gamma\left(\theta^{2}+\phi^{2}+\dot{x}+\dot{y}\right)$
+\begin_inset Formula $r(t)=1-\lambda\left(\theta^{2}+\phi^{2}+\dot{x}+\dot{y}\right)$
 \end_inset
 
 
@@ -389,14 +389,11 @@ if fallen over
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\gamma$
+\align center
+\begin_inset Formula $\lambda$
 \end_inset
 
- is a reward shaping parameter, and will be small 
-\begin_inset Formula $\left(\gamma=0.05\right)$
-\end_inset
-
-
+ is a reward shaping parameter
 \end_layout
 
 \begin_layout EndFrame
