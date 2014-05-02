@@ -906,6 +906,20 @@ Finding a controller that outperformed the hand-tuned gains is a significant
 -greedy policy selection.
 \end_layout
 
+\begin_layout Section
+Running the Code
+\end_layout
+
+\begin_layout Standard
+To run the code, run the script called 
+\family typewriter
+RUN_ME.m
+\family default
+ in my submission folder.
+ Provided ODE is installed and you have the appropriate mex file, you should
+ see plots of the gains and Q-values changing as the Hopper hops.
+\end_layout
+
 \begin_layout Bibliography
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
