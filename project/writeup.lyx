@@ -5,6 +5,7 @@
 \textclass article
 \begin_preamble
 \usepackage{listings}
+\usepackage{pdfsync}
 \end_preamble
 \use_default_options true
 \maintain_unincluded_children false
@@ -72,29 +73,861 @@ ESE 650 Final Project
 \begin_inset Newline newline
 \end_inset
 
-Raibert Hopper
+Adaptive gain-scheduling of a Raibert-Style Hopper using Q-learning
 \end_layout
 
 \begin_layout Author
 Tarik Tosun
 \end_layout
 
-\begin_layout Section*
+\begin_layout Abstract
+Q-learning was applied to improve control performance of a simulated Raibert-sty
+le hopping robot in three dimensions.
+ Rather than learning a policy over control outputs directly, Q-learning
+ was used to learn an a policy over controller gains as a function of state.
+ In this report, we present the structure and methodology of the system,
+ and show that Q-learning produces a gain-scheduling policy which outperforms
+ hand-tuned gains.
+\end_layout
 
+\begin_layout Section
+Background
+\end_layout
+
+\begin_layout Subsection
+Raibert Hopper
+\end_layout
+
+\begin_layout Standard
+The Hopper is a one-legged hopping robot, developed by Marc Raibert and
+ collaborators at Carnegie Mellon in the 1980's (Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:hopper-schematic"
+
+\end_inset
+
+).
+ Early research in the dynamics and control of the Hopper formed the basis
+ for modern research in legged locomotion.
+ In their papers, Raibert 
+\emph on
+et al.
+
+\emph default
+ describe an effective feedback controller scheme for the Hopper 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "raibert,raibert2"
+
+\end_inset
+
+.
+ The controller has three distinct parts, controlling lateral velocity of
+ the center of mass, body attitude, and hopping height.
+ For brevity, we present the controller for the 2d case here; it may be
+ easily generalized to the 3d case.
+ During the
+\shape smallcaps
+ flight
+\shape default
+ phase of the Hopper's gait, the body flies through the air, and the leg
+ is positioned to stabilize and control lateral velocity:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left(x_{foot}\right)_{d}=\frac{\dot{x}T_{st}}{2}+K_{foot}\left(\dot{x}-\dot{x}_{d}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\left(\phi_{hip}\right)_{d}=\phi_{body}+\sin^{-1}\left(\frac{x_{foot,d}}{l_{leg}}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here, 
+\begin_inset Formula $\left(x_{foot}\right)_{d}$
+\end_inset
+
+ is the necessary foot placement relative the body to maintain the desired
+ velocity, and 
+\begin_inset Formula $\left(\phi_{hip}\right)_{d}$
+\end_inset
+
+ is the corresponding hip angle to achieve correct placement.
+ Hip joint velocity is controlled with a standard PD controller:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\dot{\phi}_{hip}=K_{p,flight}*\left(\left(\phi_{hip}\right)_{d}-\phi_{hip}\right)-K_{d,flight}*\dot{\phi}_{hip}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+During the 
+\shape smallcaps
+stance
+\shape default
+ phase, the Hopper's foot is in contact with the ground, and it may correct
+ the attitude of body by moving the hip joint.
+ Note that this is impossible during the flight phase, as angular momentum
+ will always be conserved.
+ Attitude control is implemented with a standard PD controller:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\dot{\phi}_{hip}=-K_{p,stance}*\phi_{body}+K_{d,stance}*\dot{\phi}_{body}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here we assume that the desired attitude of the body is always zero.
+\end_layout
+
+\begin_layout Standard
+Hopping height is regulated by applying a constant thrust force during every
+ 
+\shape smallcaps
+stance
+\shape default
+ phase.
+ Some frictional losses are present in the system, so by conservation of
+ energy the hopper will bound to a unique stable height when the energy
+ added by the thrust equals the losses of a single bound.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename images/hopper.jpeg
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Schematic of the Raibert Hopper 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "raibert"
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:hopper-schematic"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Q-learning
+\end_layout
+
+\begin_layout Standard
+Q-learning is a temporal-difference learning (TD) algorithm.
+ TD methods are a form of reinforcement learning that combine Monte-Carlo
+ techniques (MC) and Dynamics Programming (DP).
+ The goal is to select a control policy 
+\begin_inset Formula $\pi$
+\end_inset
+
+ that will maximize the performance of a system as measured by some reward
+ function 
+\begin_inset Formula $R(s)$
+\end_inset
+
+.
+ In the TD estimation problem, we estimate the expected total value of policy
+ 
+\begin_inset Formula $\pi$
+\end_inset
+
+ at state 
+\begin_inset Formula $s$
+\end_inset
+
+ as:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+V^{\pi}(s) & =E_{\pi}\left\{ R_{t}\mid s_{t}=s\right\} \\
+ & =E_{\pi}\left\{ \sum_{k=0}^{\infty}\gamma^{k}r_{t+k+1}\mid s_{t}=s\right\} \\
+ & =E_{\pi}\left\{ r_{t+1}+\gamma\sum_{k=0}^{\infty}\gamma^{k}r_{t+k+2}\mid s_{t}=s\right\} \\
+ & =E_{\pi}\left\{ r_{t+1}+\gamma V^{\pi}\left(s_{t+1}\right)\mid s_{t}=s\right\} 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here we have obtained a recursion for 
+\begin_inset Formula $V^{\pi}(s)$
+\end_inset
+
+, which we may exploit through dynamic programming.
+ Rather than performing full back-ups (estimating the expected value by
+ inspecting all successor states 
+\begin_inset Formula $s_{t+1}$
+\end_inset
+
+), in TD we perform a sample back-up, using our currently cached value of
+ 
+\begin_inset Formula $V^{\pi}\left(s_{t+1}\right)$
+\end_inset
+
+ as our estimate.
+ In this way, TD combines elements of MC and DP techniques.
+ At each time step, we perform the update:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+V(s_{t})\gets V(s_{t})=\alpha\left(r_{t+1}+\gamma V(s_{t+1})-V(s_{t})\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where 
+\begin_inset Formula $\alpha\in(0,1]$
+\end_inset
+
+ is the learning rate.
+ Given enough time and a small enough step size, this TD algorithm is guaranteed
+ to converge to 
+\begin_inset Formula $V^{\pi}$
+\end_inset
+
+ in the mean for a fixed policy 
+\begin_inset Formula $\pi$
+\end_inset
+
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "Sutton"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In Q-learning, we aim to solve the TD control problem, selecting an optimal
+ policy 
+\begin_inset Formula $\pi*$
+\end_inset
+
+.
+ The Q-function is defined over pairs of states and actions, and represents
+ the total expected value of a state-action pair, assuming that we will
+ follow the (originally unknown) optimal policy 
+\begin_inset Formula $\pi*$
+\end_inset
+
+.
+ The update equation is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Q(s_{t},a_{t})\gets Q(s_{t,}a_{t})+\alpha\left(r_{t+1}+\gamma\max_{a}Q(s_{t+1},a)-Q(s_{t,}a_{t})\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Q-learning is an off-policy method, meaning that we may run it without being
+ tied to any particular control policy.
+ Consequently, we may run it online or train on batches of data.
+ To act under the optimal policy, we simply select 
+\begin_inset Formula $\arg\max_{a}Q(s_{t+1},a)$
+\end_inset
+
+, the action which maximizes Q.
+ To continue learning as we run the policy, we may take an 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-greedy approach, selecting a random action with some probability 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+There is another algorithm, known as sarsa, which is the on-policy version
+ of Q-learning.
+ The update rule is very similar:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Q(s_{t},a_{t})\gets Q(s_{t,}a_{t})+\alpha\left(r_{t+1}+\gamma Q(s_{t+1},a)-Q(s_{t,}a_{t})\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Rather than updating with 
+\begin_inset Formula $\max_{a}Q(s_{t+1},a)$
+\end_inset
+
+, we simply select the Q value of the state-action pair we actually chose
+ at time t+1.
+ This can be advantageous in practice because it can take the stochasticity
+ of an 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-greedy policy into account.
+\end_layout
+
+\begin_layout Section
+Approach
+\end_layout
+
+\begin_layout Standard
+The Raibert controller was implemented as described in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "raibert"
+
+\end_inset
+
+ for control of a 3D Hopper simulated in Matlab.
+ After some hand-tuning, good performance was achieved over a wide range
+ of initial conditions (initial body attitudes) using gains 
+\begin_inset Formula $K_{foot}=0.15$
+\end_inset
+
+, 
+\begin_inset Formula $K_{p,att}=30$
+\end_inset
+
+, 
+\begin_inset Formula $K_{d,att}=0.1$
+\end_inset
+
+.
+ The goal was to use Q-learning to generate an optimal gain-scheduling policy
+ which would improve the performance of the Hopper as measured by the following
+ reward function:
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="2" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $r(t)=1-\lambda\left(\theta^{2}+\phi^{2}+\dot{x}+\dot{y}\right)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+if standing
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+if fallen over
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here, 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ is a reward shaping parameter controlling the penalty placed on state error,
+ and provides some reward gradient information when the robot is not about
+ to fall over, as described by Tedrake 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "tedrake"
+
+\end_inset
+
+.
+ In all experiments, 
+\begin_inset Formula $\lambda=0.05$
+\end_inset
+
+ was used.
+\end_layout
+
+\begin_layout Standard
+A limited set of state variables was used for Q-learning, to reduce the
+ dimensionality of the learning problem.
+ The state variables were: 
+\begin_inset Formula $\left\{ \dot{x},\dot{y},\theta_{body},\phi_{body},\theta_{hip},\phi_{hip}\right\} ,$
+\end_inset
+
+ and the control policy parameters were: 
+\begin_inset Formula $\left\{ K_{foot},K_{p,att}K_{d,att}\right\} $
+\end_inset
+
+, giving a nine-dimensional state-action space.
+\end_layout
+
+\begin_layout Subsection
+Radial Basis Functions
+\end_layout
+
+\begin_layout Standard
+The canonical formulations of TD learning problems assume a discrete state-actio
+n space.
+ For control of a dynamical system like the Hopper, a continuous representation
+ is preferable.
+ Radial basis functions were used as a finite-dimensional representation
+ of the continuous state-action space.
+ 
+\begin_inset Formula $N$
+\end_inset
+
+ identical isotropic gaussians were distributed over the state-action space
+ to approximate the continuous Q-function as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Q(s,a)=\sum_{i}^{N}k_{i}(s,a)Q_{i}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+k_{i}(s,a)=\frac{1}{\sqrt{(2\pi)^{9}\sigma^{2}}}\exp\left(\frac{-1}{2\sigma^{2}}(\underbar{x}-\underbar{\mu}_{i})\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The corresponding update rule is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Q_{i}\gets Q_{i}+\alpha_{i}\left\{ r_{t+1}+\gamma\max_{a_{t+1}}Q(s_{t+1},a_{t+1})-Q_{i}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\alpha_{i}=\alpha k_{i}(s_{t},a_{t})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The centers 
+\begin_inset Formula $\underbar{\mu}_{i}$
+\end_inset
+
+ of the gaussian kernels were placed by performing K-means clustering on
+ the training data.
+ To ensure that the set of gaussians could appropriately cover the state-action
+ space, each dimension of the training data was mean-centered and scaled
+ to unit variance before performing batch Q-learning.
+ In all experiments presented here, 
+\begin_inset Formula $N=200$
+\end_inset
+
+ kernels were used, with variance 
+\begin_inset Formula $\sigma^{2}=25$
+\end_inset
+
+.
+ Literature indicates that wide radial basis functions tend to produce better
+ results in reinforcement learning 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "kretchmar"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Section
+Experiments
+\end_layout
+
+\begin_layout Standard
+Simulations were performed with combinations of 10 random initial conditions
+ and 10 random controllers, for a total of 1000 training episodes each of
+ length 
+\begin_inset Formula $t=500$
+\end_inset
+
+.
+ A test set of 30 random initial conditions (different from those in the
+ training set) was prepared.
+ Control policy performance is measured as the average total reward per
+ episode (ATR) over the test set, with a maximum episode length of 
+\begin_inset Formula $t=500$
+\end_inset
+
+.
+ As a baseline, the human-tuned controller with parameters 
+\begin_inset Formula $K_{foot}=0.15$
+\end_inset
+
+, 
+\begin_inset Formula $K_{p,att}=30$
+\end_inset
+
+, 
+\begin_inset Formula $K_{d,att}=0.1$
+\end_inset
+
+ was tested, and scored an ATR of 413.73.
+ In all experiments, batch Q-learning was performed using reward discount
+ 
+\begin_inset Formula $\gamma=0.9$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In the first experiment, the learning rate 
+\begin_inset Formula $\alpha(i)=0.8*exp(-i)$
+\end_inset
+
+, where 
+\begin_inset Formula $i$
+\end_inset
+
+ is the iteration number, for 5 iterations over the entire batch of 1000
+ episodes.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ATR-dynamic"
+
+\end_inset
+
+ plots test set ATR for each of the five iterations.
+\end_layout
+
+\begin_layout Standard
+In the second experiment, a constant learning rate of 
+\begin_inset Formula $\alpha(i)=0.01$
+\end_inset
+
+ was used for 50 iterations.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ATR50"
+
+\end_inset
+
+ plots test set ATR over the 50 iterations.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/atr-0.8dynamic.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+ATR vs.
+ Q-learning iteration, 
+\begin_inset Formula $\alpha(t)=0.8\exp(i)$
+\end_inset
+
+, 5 iterations
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:ATR-dynamic"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/atr-50.pdf
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+ATR vs.
+ Q-learning iteration, 
+\begin_inset Formula $\alpha(t)=0.01$
+\end_inset
+
+, 50 iterations
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:ATR50"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Analysis and Conclusions
 \end_layout
 
 \begin_layout Bibliography
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
-key "key-1"
+key "raibert"
 
 \end_inset
 
-Ratliff, N., Silver, D., & Bagnell, J.
- (2009).
- Learning to search: Functional gradient techniques for imitation learning.
- Autonomous Robots, 1–36.
- Retrieved from http://link.springer.com/article/10.1007/s10514-009-9121-3
+Raibert, M.
+ H., Brown, H.
+ B., Chepponis, M., Hastings, E., Koechling, J., Murphy, K.
+ N., … Stentz, A.
+ J.
+ (1983).
+ Dynamically Stable Legged Locomotion.
+ Pittsburgh, PA.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "raibert2"
+
+\end_inset
+
+Raibert, M.
+ H.
+ (1984).
+ Hopping in legged systems — Modeling and simulation for the two-dimensional
+ one-legged case.
+ IEEE Transactions on Systems, Man, and Cybernetics, SMC-14(3), 451–463.
+ doi:10.1109/TSMC.1984.6313238
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "tedrake"
+
+\end_inset
+
+Tedrake, R., & Seung, H.
+ S.
+ (n.d.).
+ Improved Dynamic Stability Using Reinforcement Learning.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "kretchmar"
+
+\end_inset
+
+Kretchmar, R.
+ M., & Anderson, C.
+ W.
+ (1990).
+ Comparison of CMACs and Radial Basis Functions for Local Function Approximators
+ in Reinforcement Learning (pp.
+ 4–7).
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "Sutton"
+
+\end_inset
+
+Sutton, R.
+ S., & Barto, A.
+ G.
+ Reinforcement Learning: An Introduction.
+ Cambridge, Massachusetts: the MIT Press.
+ doi:10.1109/TNN.1998.712192
 \end_layout
 
 \end_body

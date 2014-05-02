@@ -7,6 +7,8 @@ if isempty(HOPPER),
   hopperInit;
 end
 %% Generate a set of gains and a set of IC's
+%atr = zeros(1,50);
+%for(Iter = 1:50)
 useQ = true;
 testSet = true;
 nIc = 10;
@@ -14,15 +16,15 @@ nGains = 10;
 gainStd = 0.3;
 gains0 = [0.15, 30, 0.1];   % control gains
 
-if testSet
+if(testSet)
     data = load('testIcs.mat');
     ics = data.testIcs;
-    nIc = numel(testIcs);
+    nIc = numel(ics);
 else
     ics = (pi/5)*randn(nGains,1);
 end
 
-if useQ
+if(useQ)
     nGains = 1;
 else
     gainset = abs(bsxfun(@times, gains0, 1+randn(nIc,3)*gainStd));
@@ -51,5 +53,7 @@ for i=1:nIc
         disp([int2str(i) ', ' int2str(j) ': ' int2str(size(episodes{counter},1)) ' states']);
     end
 end
+%atr(Iter) = averageTotalReward(episodes, Qdata);
+%end
 %%
-postProcess;
+%postProcess;
