@@ -9,7 +9,9 @@ Qdata.centers = centers;
 Qdata.means = m;
 Qdata.stddevs = stddev;
 Qdata.params = params;
-Qvals = Qlearn( scaledEpisodes, Qdata );
+[Qvals, QvalsHistory] = Qlearn( scaledEpisodes, Qdata );
+Qdata.Qvals = Qvals;
+Qdata.QvalsHistory = QvalsHistory;
 %% rescale the data and report best Q's:
 realCenters = bsxfun( @plus, bsxfun( @times, centers, stddev ), m);
 [Qmax, idx] = max(Qvals);

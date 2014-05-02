@@ -15,7 +15,8 @@ alphas = beta*ks;
 [Qmax, ~] = maxAction( Stp1, centers, Qvals, params );
 One = ones(size(alphas));
 try
-deltaQs = -alphas.*Qvals + alphas.*( rtp1*One + gamma*Qmax*One - ks'*Qvals );
+%deltaQs = -alphas.*Qvals + alphas.*( rtp1*One + gamma*Qmax*One - ks'*Qvals );
+deltaQs = -alphas.*Qvals + alphas.*( rtp1*One + gamma*Qmax*One );
 catch
     problem=true;
 end

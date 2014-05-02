@@ -1,4 +1,4 @@
-function Qvals = Qlearn( episodes, Qdata )% centers, Qvals, params )
+function [Qvals, QvalsHistory] = Qlearn( episodes, Qdata )% centers, Qvals, params )
 % Qvals = Qlearn( episodes, centers, Qvals )
 % Batch learn Q-function for episodes.
 %
@@ -6,11 +6,13 @@ centers = Qdata.centers;
 Qvals = Qdata.Qvals;
 params = Qdata.params;
 numRepetitions = 5;
+QvalsHistory = repmat(Qvals, 1, numRepetitions);
 Nep = numel(episodes);
 for r = 1:numRepetitions
-    beta = params.beta0*exp(-r);
+    disp(['Round ' int2str(r)]);
+    beta = params.beta0*exp(-(r-1))
     deltaQ = zeros(size(Qvals));
-    for i=1:Nep
+    parfor i=1:Nep
         X = episodes{i};   % states and actions
         Nsteps = size(X,1);
         for t=1:Nsteps-1
@@ -18,4 +20,5 @@ for r = 1:numRepetitions
         end
     end
     Qvals = Qvals + deltaQ;
+    QvalsHistory(:,r) = Qvals;
 end

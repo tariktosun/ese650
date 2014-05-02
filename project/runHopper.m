@@ -9,8 +9,8 @@ end
 gainHistory = zeros(N,3);
 Qhistory = zeros(N,1);
 
-a0 = initial;
 
+a0 = initial;
 hopperReset(a0);
 
 kick_thresh = 0.1;
