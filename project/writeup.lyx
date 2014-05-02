@@ -87,7 +87,7 @@ le hopping robot in three dimensions.
  was used to learn an a policy over controller gains as a function of state.
  In this report, we present the structure and methodology of the system,
  and show that Q-learning produces a gain-scheduling policy which outperforms
- hand-tuned gains.
+ hand-tuned gains in real time.
 \end_layout
 
 \begin_layout Section
@@ -191,7 +191,8 @@ stance
  the attitude of body by moving the hip joint.
  Note that this is impossible during the flight phase, as angular momentum
  will always be conserved.
- Attitude control is implemented with a standard PD controller:
+ Attitude control is implemented with a standard PD controller.
+ We assume that the desired attitude of the body is always zero.
 \end_layout
 
 \begin_layout Standard
@@ -203,10 +204,6 @@ stance
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-Here we assume that the desired attitude of the body is always zero.
 \end_layout
 
 \begin_layout Standard
@@ -223,6 +220,7 @@ stance
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status collapsed
@@ -319,7 +317,7 @@ V^{\pi}(s) & =E_{\pi}\left\{ R_{t}\mid s_{t}=s\right\} \\
 \end_layout
 
 \begin_layout Standard
-Here we have obtained a recursion for 
+We have obtained a recursion for 
 \begin_inset Formula $V^{\pi}(s)$
 \end_inset
 
@@ -342,7 +340,7 @@ Here we have obtained a recursion for
 \begin_layout Standard
 \begin_inset Formula 
 \[
-V(s_{t})\gets V(s_{t})=\alpha\left(r_{t+1}+\gamma V(s_{t+1})-V(s_{t})\right)
+V(s_{t})\gets V(s_{t})+\alpha\left(r_{t+1}+\gamma V(s_{t+1})-V(s_{t})\right)
 \]
 
 \end_inset
@@ -447,12 +445,12 @@ Rather than updating with
 
 , we simply select the Q value of the state-action pair we actually chose
  at time t+1.
- This can be advantageous in practice because it can take the stochasticity
- of an 
+ This can be advantageous in practice because it will account for the stochastic
+ity of an 
 \begin_inset Formula $\epsilon$
 \end_inset
 
--greedy policy into account.
+-greedy policy.
 \end_layout
 
 \begin_layout Section
@@ -737,10 +735,7 @@ reference "fig:ATR-dynamic"
 \end_inset
 
  plots test set ATR for each of the five iterations.
-\end_layout
-
-\begin_layout Standard
-In the second experiment, a constant learning rate of 
+ In the second experiment, a constant learning rate of 
 \begin_inset Formula $\alpha(i)=0.01$
 \end_inset
 
@@ -753,18 +748,26 @@ reference "fig:ATR50"
 \end_inset
 
  plots test set ATR over the 50 iterations.
+ In both experiments, a simulation timestep of 0.01 seconds was used, so
+ that each experiment represented a maximum 5 seconds of simulation time.
+ Running a simulation while selecting optimal control gains based on the
+ Q-table took about 3 seconds, so the Q-learning control could be run in
+ real-time on an actual robot.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status collapsed
 
 \begin_layout Plain Layout
+\noindent
+\align center
 \begin_inset Graphics
 	filename images/atr-0.8dynamic.pdf
-	width 100text%
+	width 75text%
 
 \end_inset
 
@@ -802,14 +805,17 @@ name "fig:ATR-dynamic"
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status collapsed
 
 \begin_layout Plain Layout
+\noindent
+\align center
 \begin_inset Graphics
 	filename images/atr-50.pdf
-	width 100text%
+	width 81text%
 
 \end_inset
 
@@ -851,6 +857,53 @@ name "fig:ATR50"
 
 \begin_layout Section
 Analysis and Conclusions
+\end_layout
+
+\begin_layout Standard
+Q-learning produced a control policy which outperformed hand-tuned gains
+ for the Hopper, as measured by the defined reward metric.
+ In both experiments, repeating batch training for many iterations did not
+ improve performance - in fact, in the first experiment it had an adverse
+ effect on performance.
+ This implies that the model of Q is overfit to the training data, possibly
+ because the learning rate was to large.
+ In an effort to avoid this, Experiment 2 used a much smaller constant learning
+ rate (0.01).
+ This resulted in large fluctuations in ATR over iterations, and no significant
+ performance improvement over the course of iteration.
+ This may imply that a step size of 0.01 was still too large, resulting in
+ large jumps around a performance maximum without actually converging to
+ the maximum.
+ Future work would explore the affect of learning rate on performance, and
+ attempt to find an optimal learning rate.
+\end_layout
+
+\begin_layout Standard
+Finding a controller that outperformed the hand-tuned gains is a significant
+ achievement for the Q-learning technique applied in these experiments,
+ because the initial controller was already quite performant, often capable
+ of stabilizing the robot after being dropped from initial attitudes as
+ large as 
+\begin_inset Formula $\frac{\pi}{2.2}$
+\end_inset
+
+.
+ The Q-learned policy has the additional advantage of adaptability.
+ Although it was not explored in this report, Q-learning could be run on-line
+ on an actual robot, selecting a control policy in an 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-greedy fashion to continually improving policy performance.
+ This could be very beneficial for long-term deployments, in which the robot
+ actuators and sensors would wear over time, causing the optimal control
+ policy to change.
+ In such a deployment, it would likely be better to employ the sarsa algorithm
+ rather than Q-learning, to account for the stochasticity of 
+\begin_inset Formula $\epsilon$
+\end_inset
+
+-greedy policy selection.
 \end_layout
 
 \begin_layout Bibliography
