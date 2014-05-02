@@ -7,8 +7,8 @@ if isempty(HOPPER),
   hopperInit;
 end
 %% Generate a set of gains and a set of IC's
-useQ = false;
-testSet = false;
+useQ = true;
+testSet = true;
 nIc = 10;
 nGains = 10;
 gainStd = 0.3;
@@ -27,7 +27,7 @@ if useQ
 else
     gainset = abs(bsxfun(@times, gains0, 1+randn(nIc,3)*gainStd));
 end
-
+Qdata.Qvals = QvalsHistory(:,1);
 
 %%
 N = 500;

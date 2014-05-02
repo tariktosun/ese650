@@ -5,12 +5,13 @@ function [Qvals, QvalsHistory] = Qlearn( episodes, Qdata )% centers, Qvals, para
 centers = Qdata.centers;
 Qvals = Qdata.Qvals;
 params = Qdata.params;
-numRepetitions = 5;
+numRepetitions = 50;
 QvalsHistory = repmat(Qvals, 1, numRepetitions);
 Nep = numel(episodes);
 for r = 1:numRepetitions
     disp(['Round ' int2str(r)]);
-    beta = params.beta0*exp(-(r-1))
+    %beta = params.beta0*exp(-(r-1))
+    beta = params.beta0;
     deltaQ = zeros(size(Qvals));
     parfor i=1:Nep
         X = episodes{i};   % states and actions
